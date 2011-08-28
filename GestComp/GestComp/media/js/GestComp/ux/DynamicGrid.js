@@ -100,7 +100,7 @@
 				},this)
     		},
     		getColumns:function(record) { 
-    			console.log('cols par def')
+    			//console.log('cols par def')
 				columns = [{
         			text: 'ID',
         			sortable: true,
@@ -134,7 +134,8 @@
     		return columns
     		},
     		// modifie la colonne construite avant reconfigure
-    		modifColumn:function(column,columnRecue,index) {return column}
+    		modifColumn:function(column,columnRecue,index) {return column},
+    		reload:function(id) {this.metaStore.load(extraParams={id:id})}
  
     	});
 

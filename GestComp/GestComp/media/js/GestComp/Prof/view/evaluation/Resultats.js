@@ -3,7 +3,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 	//store:'EvaluationResultats',
 	alias:'widget.evaluation_resultats',
 	modifColumn:function(column,columnRecue,index) {
-		console.log('colonne',column.dataIndex)
+		//console.log('colonne',column.dataIndex)
 		if (column.dataIndex=="note") {
 			//column.renderer=function(v){return 'pas de note'+v.note_max}
 			//column.renderer=""
@@ -40,7 +40,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		} else if (column.dataIndex.indexOf('resultat')!=-1) {
 			pos=column.dataIndex.indexOf('_')
 			champs='donnees'+column.dataIndex.substr(pos)
-			console.log('donnee',column.dataIndex,champs)
+			//console.log('donnee',column.dataIndex,champs)
 			column.xtype="templatecolumn";
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
                 '<i data-qtip="{'+column.dataIndex+'}" class="{[this.getClass3(values)]}">{[this.score(values)]}</div></tpl>',
@@ -62,7 +62,9 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                 },  			
  				getClass3: function(v) {
           			val=v[champs];
-          			if (!val.field) {console.log('pas field');return ""};
+          			if (!val.field) {
+          				//console.log('pas field');
+          				return ""};
           			if (val.nb_faits==='0') return "cssNF";
           			if (val.detail) diviseur=val.nb_faits||val.items;
                     else diviseur=val.items;
@@ -76,7 +78,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
   				},
   				score: function(v) {
           			val=v[champs];
-          			console.log('score',val)
+          			//console.log('score',val)
           			if (val.nb_faits==="0") return 'Non Fait';
           			st = (val.field?val.field:'--') + '</i>';
           			if (val.detail) return st+'/'+(val.nb_faits||val.items);
@@ -102,7 +104,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				var incomplet=false
 				var non_faits=0
 				var non_remplis=0
-				console.log('record',record)
+				//console.log('record',record)
 				for (j=0;j<record.fields.keys.length;j++) {
 					n=record.fields.keys[j];
 					if (n.indexOf('donnees')==0){
@@ -171,7 +173,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				record.data.note.resultat=(note!=null)?(note*note_max/max).toFixed(2):null
 				record.commit()				
 		})
-		console.log('store',store,metaData)
+		//console.log('store',store,metaData)
 		return store
 	}
 })

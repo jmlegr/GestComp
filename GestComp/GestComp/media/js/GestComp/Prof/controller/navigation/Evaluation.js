@@ -10,6 +10,12 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     refs:[{ 	
     	ref:'affichage',
     	selector:'evaluation_affichage'
+    },{
+    	ref:'resultats',
+    	selector:'evaluation_affichage #tab-resultats'
+    },{
+    	ref:'autres',
+    	selector:'evaluation_affichage #tab-autres'
     }],
     
     stores:['Evaluations'],
@@ -35,7 +41,9 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     	
     },
     selectClickEvaluation:function(view,record,item,index){    	
-    	this.getAffichage().updateTitle(record);
+    	this.getAffichage().updateTitle(record);    	
+    	this.getAutres().tpl.overwrite(this.getAutres().body,record.data)
+    	this.getResultats().reload(record.get('id'))
  		
  	},
  	

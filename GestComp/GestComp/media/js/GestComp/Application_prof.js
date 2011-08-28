@@ -20,7 +20,7 @@ Ext.application({
      
  
 
-
+/*
     Ext.create('Ext.window.Window', {
     title: 'Hello',
     height: 200,
@@ -45,11 +45,6 @@ Ext.application({
     	}
     }
 }).show();
-    //Ext.getCmp('testgrid').metaStore.load(extraParams={id:199})
-    
-    //Ext.getCmp('testgrid').metaStore.load(extraParams={id:198})
-    
-    Ext.getCmp('testgrid').metaStore.load(extraParams={id:197})
-        
+*/
     }
 });
