@@ -1,0 +1,19 @@
+.x-grid3-col-company .ux-maximgb-tg-mastercol-icon,
+.x-grid3-col-company .ux-maximgb-tg-mastercol-cb
+{
+    margin-right: 4px;
+}
+
+.ux-maximgb-tg-mastercol-cb
+{
+    vertical-align: -3px;
+    border: 1px solid black;
+}
+
+.ux-maximgb-tg-mastercol-icon
+{
+    width: 10px;
+    height: 10px;
+    vertical-align: -1px;
+    background: url('bullet_green.png') no-repeat -3px -3px;
+}

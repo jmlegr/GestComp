@@ -1,0 +1,27 @@
+K 26
+svn:wc:ra_dav:activity-url
+V 14
+/svn/!svn/act/
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/10/trunk/GestComp/GestComp/templates
+END
+login.html
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/80/trunk/GestComp/GestComp/templates/login.html
+END
+test.html
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/101/trunk/GestComp/GestComp/templates/test.html
+END
+base.html
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/116/trunk/GestComp/GestComp/templates/base.html
+END

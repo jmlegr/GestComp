@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application
+END
+urls.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/urls.pyc
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/urls.py
+END
+render2json.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/7/trunk/GestComp/GestComp/application/render2json.py
+END
+models.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/models.pyc
+END
+tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/tests.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/__init__.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/37/trunk/GestComp/GestComp/application/views.py
+END
+views.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/views.pyc
+END
+__init__.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/4/trunk/GestComp/GestComp/application/__init__.pyc
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/109/trunk/GestComp/GestComp/application/models.py
+END
+fields.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/25/trunk/GestComp/GestComp/application/fields.py
+END

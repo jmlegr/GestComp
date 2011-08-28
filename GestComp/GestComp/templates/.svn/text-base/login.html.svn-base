@@ -1,0 +1,115 @@
+<!-- $Revision$ -->
+<!-- Dernière modification le $Date$ -->
+{% extends "base.html" %}
+{% block title %} GestComp {% endblock %}
+{% block branding %}<h1 id="site-name">Gestion de compétences - G. Gironde </h1>{% endblock %}
+{% block nav-global %}{% endblock %}
+
+{% block javascripts %}
+
+<script>
+      Ext.onReady(function() {
+	  	LoginForm = Ext.extend(Ext.FormPanel, {
+    labelAlign: 'right'
+    ,labelWidth: 75
+    ,title: 'Veuillez vous identifier'
+    ,xtype: 'form'
+    ,initComponent:function() {
+        Ext.apply(this, {
+            buttons:[
+				{% if user.is_authenticated %}
+				new Ext.Button({
+                    handler: function() {window.location='logout'}
+                    ,scope: this
+                    ,text: 'Deconnexion'
+                }),
+				new Ext.Button({
+                    handler: this.retour
+                    ,scope: this
+                    ,text: 'Annuler'
+                }),
+				{% endif %} 
+                new Ext.Button({
+                    handler: this.authSubmit
+                    ,scope: this
+                    ,text: 'Connexion'
+                })
+            ]
+            ,items:[
+                new Ext.form.TextField({
+                    fieldLabel: 'Utilisateur'
+                    ,name: 'username'
+					,allowBlank:false
+                    ,width: 100
+                })
+                ,new Ext.form.TextField({
+                    fieldLabel: 'Mot de passe'
+                    ,name: 'password',
+					inputType: 'password'
+					,allowBlank:false
+                    ,showCapsWarning: true
+                    ,showStrengthMeter: false
+                    ,width: 100
+                })
+            ],
+			
+        });
+
+       LoginForm.superclass.initComponent.apply(this, arguments);
+
+        if (this.initialConfig.handler && this.initialConfig.scope){
+            //this.form.on('actioncomplete', this.initialConfig.handler, this.initialConfig.scope);
+            this.form.on('actionfailed', this.initialConfig.handler, this.initialConfig.scope);
+        }
+    }
+    ,authSubmit: function(){
+        this.form.submit({
+            clientValidation: false
+            ,method: 'POST'
+            ,url:'/gestcomp/ext_login/',
+			success: function(f,a) {//console.log('ok ca marche',f,a); 
+					//window.location='{{test}}'},
+					//console.log(a)
+					Ext.Msg.alert('ok connecté',a.result.text['lien'])
+					window.location=a.result.text['lien'];
+					},
+			failure: function(f,a) {
+				Ext.Msg.alert('echec')
+				//console.log('echec',f,a)
+				}
+	       });
+    }
+});
+		Ext.QuickTips.init();
+		l=new LoginForm()
+		new Ext.Window({
+				//applyTo : "ici",
+				closable : false,
+				modal : true,
+				width : 300,
+				autoHeight : true,
+				minimizable : false,
+				resizable : false,
+				draggable : false,
+				shadowOffset : 8,
+				id : "login_window",
+				items: [new LoginForm()]
+			}).show();
+		
+	  });
+</script>
+{% endblock %}
+{% block content %}
+<h1 style="{align:center}">Gestion de compétence SEGPA G.Gironde</h1>
+<noscript>
+<br />
+<br />
+<em>Veuillez activer le Javascript de votre navigateur s'il vous plaît!</em>
+<br />
+<br />
+</noscript>
+{% if user.is_authenticated %}
+	{{user.username}} ({{user.first_name}} {{user.last_name}} connecté)
+{% endif %}
+<div id='ici'></div>
+{% endblock %}

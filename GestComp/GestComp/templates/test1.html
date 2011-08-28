@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block javascripts %}
+<link rel="stylesheet" type="text/css" href="/smedia/js/extjs/examples/ux/css/LockingGridView.css">
+
+<script type="text/javascript" src='smedia/js/extjs/examples/ux/LockingGridView.js' ></script>
+
+<!-- filter row -->
+<script src="/smedia/js/progs/test.js"></script>
+<script type="text/javascript">
+	Ext.onReady(function() {
+		var win=new Ext.Window({
+			title: 'fenêtre',
+			layout:'fit',
+			width:'400', height:400,
+			items:[{xtype:'paneldrop',id:'dropanel',			
+			}]
+		}).show();
+		var panel=new Ext.Panel({
+			layout:'accordion',autoScroll:true, width:350, height:450, id:'testpanel',renderTo:'test', title:"panel",
+			layoutConfig: {
+        // layout-specific configs go here
+        titleCollapse: false,
+         fill:true
+        //activeOnTop: true
+    },
+
+		})
+		//var testDDtarget=new Ext.dd.DDTarget('testpanel');
+		var testDDtarget=new Ext.dd.DropZone('testpanel',{
+			onContainerOver:function(ddSrc,evtObj,ddData) {
+				console.log('container',this)
+			}
+		});
+		var testDDtarget1=new Ext.dd.DropZone('dropanel',{
+			containerScroll:true,ddGroup:'test',
+			onNotifyEnter: function() {console.log('on entre')},
+			onContainerOver:function(ddSrc,evtObj,ddData) {
+				console.log(ddSrc,ddSrc.getTargetCoord())
+				//console.log('container',this.id);
+				ct=Ext.getCmp(this.id) // panel contenant
+				var top=ct.body.getTop(); // position haute du panel contenant
+				// on recherche quel panel est sous le drag
+				//TODO : si yen a pas, c'est un ajout
+				console.log('x,y',ddSrc.lastPageX,ddSrc.lastPageY)
+				for (var i=0; i<ct.items.length;i++){
+					item=ct.items.get(i);
+					Haut=item.getPosition()[1]
+					h=item.getSize()['height']
+					itemCmp=Ext.getCmp(item.id);
+					itemCmp.removeClass('dropHaut');
+					itemCmp.removeClass('dropBas');
+					if (ddSrc.lastPageY>=Haut && ddSrc.lastPageY<Haut+h/2) {
+					 console.log(Haut,Haut+h,'au dessus de',i,item.id,ddSrc.el.getBottom())
+					 Ext.getCmp(item.id).addClass('dropHaut')
+					 
+					 }
+					else
+					if (ddSrc.lastPageY>=Haut+h/2 && ddSrc.lastPageY<Haut+h) {
+					 console.log(Haut,Haut+h,'au dessous de',i,item.id,ddSrc.el.getBottom())
+					 Ext.getCmp(item.id).addClass('dropBas')
+					 
+					 }
+					}
+				max=top+ct.body.getHeight()-50
+				//console.log('top',top,'max',max,'lastY',ddSrc.lastPageY)
+				if (ddSrc.lastPageY>max) ct.body.scroll('down',5)
+				else if (ddSrc.lastPageY<top+50) ct.body.scroll('up',5)
+				
+				
+			}
+		});
+		
+		
+		draggable={
+    			onBeforeDrag: function(evtObj,targetElId) {console.log('ava,t')},
+				onDragEnter : function(evtObj,targetElId) {
+					var targetEl=Ext.get(targetElId);
+					targetEl.addClass('droppanel'); this.valid=true; console.log(this)
+					var dropEl=Ext.getCmp(targetElId);
+					if (dropEl.items.length>0) {
+						var posB=[]
+						var posH=[]
+						var posM=[]
+						var posT=[]
+						dropEl.items.each(function (it) {
+							Haut=it.getPosition()[1]
+							h=it.getSize()['height']
+							posH.push(Haut)
+							posM.push(Haut+Math.round(h/2))							
+							posB.push(Haut+h)
+							posT.push(it.id)
+						
+							
+						})
+					};
+					this.posB=posB;
+						this.posM=posM;
+						this.posH=posH;
+						this.posT=posT;
+					//console.log(this.posH,posH); console.log(this.posM)
+					//console.log(this.posB); console.log(this.posT)
+					// on récupère les coordonnées si ya
+					
+				},
+				onDragOut: function(evtObj,targetElId) {
+					var targetEl=Ext.get(targetElId);
+					targetEl.removeClass('droppanel'); 
+					delete this.valid;
+					delete this.posB;
+				},
+				onDragDrop: function(evtObj,targetElId) {
+					var dragEl=Ext.get(this.getEl());
+					var dropEl=Ext.getCmp(targetElId);
+					console.log('droped:',dragEl,dropEl,targetElId)
+					id=dragEl.id
+					if (typeof(this.posB) != "undefined") {
+						id=(this.type=="dessus"?this.itemDrop:this.itemDrop+1)
+						console.log('id',id)
+						if (dropEl.layout.activeItem) dropEl.layout.activeItem.collapse(false);
+						dropEl.insert(id,Ext.getCmp(dragEl.id))
+					}
+					else dropEl.add(Ext.getCmp(dragEl.id))
+					dropEl.update();
+					dropEl.doLayout();
+					//dropEl.layout.setActiveItem(Ext.getCmp(dragEl.id));
+					if (dropEl.layout.activeItem) dropEl.layout.activeItem.collapse()
+					dropEl.removeClass('droppanel');
+				}};
+		e=Ext.getCmp('dropanel');
+		for (var i=4;i<20;i++) {
+			e.add({id:'test_'+i,title:'test '+i,html:'contenu '+i,draggable:e.draggable,autoHeight:true})
+		}
+		e.update(); e.doLayout();
+		var items=Ext.getCmp('dropanel').items
+		items.each(function(el) {
+			//console.log(el.id,el)
+			el.getEl().on('click',function() {console.log('clic',this.id)})
+			/*el.getEl().on('mouseover',function() {console.log('over',this.id,this.over=true);
+					//this.highlight()
+					this.addClass('dropHaut')
+					})
+			el.getEl().on('mouseout',function() {console.log('out',this.id,this.over=false)
+					this.removeClass('dropHaut')
+			})*/
+		})
+		
+	})
+</script>
+<style type="text/css">
+	.dropdiv {
+		width:400px; 
+		height:500px;
+		border: 2px solid #FF0000;
+		background-color:#eee29f;		
+	}
+	.dropzone {
+		background-color:#9feeae;
+	}
+	.droppanel {
+		border: 2px solid #FF0000;
+		background-color:#eee29f;
+	}
+	.dropHaut {
+		border-top-color:#FF0000;
+		border-top-width: 2px
+	}
+	.dropBas {
+		border-bottom-color:#FF0000;
+		border-bottom-width: 2px
+	}
+</style>
+{% endblock %}
+{% block content %}
+<div id="test" class="dropdiv">
+	drop
+</div>
+{% endblock %}

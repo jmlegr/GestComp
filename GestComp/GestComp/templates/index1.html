@@ -1,0 +1,57 @@
+<html>
+<head>
+    <title>Hello prof</title>
+ 
+    <link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/resources/css/ext-all.css">
+	<link rel="stylesheet" type="text/css" href="/smedia/css/icons.css">
+	<link rel="stylesheet" type="text/css" href="/smedia/css/Prof.css">
+	<link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/examples/ux/grid/css/GridFilters.css">
+	<link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/examples/ux/grid/css/RangeMenu.css">
+    <!--
+	<script type="text/javascript" src="/smedia/js/ext-4/ext-debug.js"></script>
+	-->
+	<script type="text/javascript" src="/smedia/js/ext-4/ext-all-debug.js"></script>
+	<script type="text/javascript" src="/smedia/js/ext-4/locale/ext-lang-fr.js"></script>
+	<script type="text/javascript" src="/smedia/js/mon-locale-fr-ext4.js"></script>
+	
+	<script type="text/javascript">
+	 	
+		var user={}
+		user.is_authenticated=false;
+		{% if user.is_authenticated %}
+			user.is_authenticated=true
+			user.id={{user.id}}
+			user.nom="{{user.last_name}}"
+			user.prenom="{{user.first_name}}"
+			//console.log(user);
+			user.est_prof=false;
+			{% if perms.application.est_prof %}
+				user.est_prof=true
+			{% endif %}
+			{% if perms.application.est_admin %}
+				user.is_admin=true
+			{% endif %}
+		
+		{% endif %}
+	        // Enable dynamic loading for improved debugging support
+		
+        Ext.Loader.setConfig({enabled: true});   
+		        // Since the app classes are not under the standard Ext /src path we
+        // have to tell the loader where to look for them. The app names should
+        // match the physical layout, including namespaces (e.g. Ext.migration.App 
+        // should be found in migration/App.js). This is how the ClassManager can
+        // resolve the classes dynamically.
+        Ext.Loader.setPath('GestComp', '/smedia/js/GestComp');
+		Ext.Loader.setPath('Ext.ux', '/smedia/js/ext-4/examples/ux');
+        
+		Ext.onReady(function(){
+            // Referencing Ext.migration.App directly as an instance object will not 
+            // work yet at this stage since classes are defined by their string names
+            // now. You must first explicitly create an instance via the ClassManager.
+            Ext.create('GestComp.Prof').init();
+			GestComp.Message.fireEvent('message',this,'Lancement','')
+        });
+    </script>
+</head>
+<body></body>
+</html>

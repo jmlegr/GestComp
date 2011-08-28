@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/17/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter
+END
+DateFilter.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/63/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter/DateFilter.js
+END
+ListFilter.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/17/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter/ListFilter.js
+END
+NumericFilter.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/17/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter/NumericFilter.js
+END
+BooleanFilter.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/17/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter/BooleanFilter.js
+END
+StringFilter.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/17/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter/StringFilter.js
+END
+Filter.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/17/trunk/GestComp/GestComp/media/js/ux/gridfilters/filter/Filter.js
+END

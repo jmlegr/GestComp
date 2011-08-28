@@ -1,0 +1,257 @@
+
+.createurPerso {
+	display:block;
+	float:left;
+	width:16px;
+	height:16px;
+	background-image: url('/smedia/css/icons/user.png');
+}
+
+.createurAutres {
+	display:block;
+	float:left;
+	width:16px;
+	height:16px;
+	background-image: url('/smedia/css/icons/group.png');
+}
+.x-header-soustitre {
+	/*font-weight:normal;*/	
+	
+}
+
+.testimg{
+	display:block;
+	float:right;
+	/*relative:bottom;*/
+	height:7px;
+	background: url('/smedia/images/icones-eval.png') no-repeat
+}
+
+.testimgD4{
+	color:red; 
+	width:10px;
+	background-position: 0 0 ;
+} 
+.testimgPO{
+	color:green;
+	width:10px;
+	background-position: -9px 0 ;
+}
+.testimgPR{
+	color:green;
+	width:10px;
+	background-position: -19px 0 ;
+}
+.imgdetail {
+	display:block;
+	/*float:right;*/
+	position:relative;
+	top:7px;
+	left:2px;
+	width:7px;
+	height:7px;
+	background: url('/smedia/images/icones-eval.png') no-repeat 
+}
+.imgdetailNA {
+	background-position: 0px -7px;
+	
+}
+.imgdetailEC1 {
+	background-position : -7px -7px 
+}
+.imgdetailEC2 {
+	background-position : -15px -7px 
+}
+.imgdetailA {
+	background-position : -22px -7px 
+}
+.x-grid3-hd-headerid {
+	color:red;
+	/* overflow:auto; */
+}
+.cssNF {
+	color:grey;
+	/*font-size:70%*/
+}
+.cssNA {
+	background-color: #fb7474;*/
+	/*color: #fb7474;*/
+	background-image: none;
+}
+.cssA {
+	background-color: #00ff00;
+	/*color:#00ff00;*/
+	background-image: none;
+}
+.cssEC1 {
+	background-color: #ffa500;
+	/*color:#ffa500;*/
+	background-image: none;
+}
+.cssEC2 {
+	background-color: #d4ff00;
+	/*color:#b1ca36;*/
+	background-image: none;
+}
+.cssAplus {
+	background-color: #00ff00;
+	/*color:#00ff00;*/
+	background-image: none;
+	font-weight : bold;	
+}
+.cssDefautFormBody {
+	 background-color: #f0ebe2;!important
+	 font-size: italic;
+}
+.fondSlide {
+	background-image:url('/smedia/images/ticks.png'); !important
+}
+.cssBarTest {
+	background-image: url('/smedia/images/bar.gif'); 
+    height: 10px; 
+    width: 75%; 
+    text-align:right; 
+    display:block;
+    float: left;
+	background-repeat:no-repeat;
+}
+.cssDefautFormHeader {
+	background-color: #6d8daa; 
+	 font-size: italic; 
+}
+.cssGras {
+	font-weight : bold;
+}
+.cssFini {
+	text-decoration : line-through;
+	color : gray;
+}
+/* Default style for text in accordion panes. */
+.cssDefault {
+  font-size : 10pt;
+  font-family : arial;
+}
+
+
+/* Style for text in please wait dialog. */
+.cssPleaseWait {
+  font-size : 12pt;
+  font-weight : bold;
+  font-family : arial;
+}
+
+
+/* Style for text in about dialog. */
+.cssAbout {
+  font-size : 11pt;
+  font-weight : bold;
+  font-family : arial;
+}
+
+
+/* Style for source of dialog animations. */
+.cssSource {
+  position : absolute;
+  left: 1px;
+  top : 1px;
+  width : 1px;
+  height : 1px;
+}
+
+
+/* Style for table showing item details. */
+.cssDetailsTable {
+  border : 2px solid #99bbe8;
+  padding : 2px;
+}
+
+
+/* Style for field label in table showing item details. */
+.cssDetailsLabel {
+  background-color : #c7dffc;
+  font-size : 10pt;
+  font-family : arial;
+}
+
+
+/* Style for field data in table showing item details. */
+.cssDetailsData {
+  background-color : #f4f4f4;
+  font-weight : bold;  
+  font-size : 12pt;
+  font-family : arial;
+}
+.cssDetailsDataMini {
+  background-color : #f4f4f4;
+  font-size : 11pt;
+  font-family : arial;
+}
+
+
+
+/* Style for dataview body (icon text mainly). */
+#listingCard .x-panel-body {
+  background : white;
+  font-size : 8pt;
+  font-family : arial;
+}
+
+
+
+/* Style for dataview thumbnails. */
+#listingCard .thumb-wrap {
+  float : left;
+  margin : 4px;
+  margin-right : 0;
+  padding : 5px;
+}
+
+
+/* Style for dataview item text. */
+#listingCard .thumb-wrap span {
+  display : block;
+  overflow : hidden;
+  text-align : center;
+}
+
+
+/* Style for when an icon in dataview is hovered over. */
+#listingCard .x-view-over {
+  border :1px solid #dddddd;
+  background : #efefef;
+  padding: 4px;
+}
+
+
+/* Style for when an icon in dataview is selected. */
+#listingCard .x-view-selected {
+  background : #eff5fb;
+  border : 1px solid #99bbe8;
+  padding : 4px;
+}
+
+
+/* Fix for ComboBox arrow moving error in v3.0. */
+.x-form-field-wrap {
+  position : static;
+}
+.x-form-field-wrap .x-form-trigger {
+  position : static;
+  top : auto;
+  vertical-align : middle;
+}
+.x-form-field-wrap .x-form-twin-triggers .x-form-trigger {
+  position : static;
+  top : auto;
+  vertical-align : middle;
+}
+
+.gridBodyNotifyOver {
+border-color: #00cc33 !important;
+}
+.gridRowInsertBottomLine {
+border-bottom:1px dashed #00cc33;
+}
+.gridRowInsertTopLine {
+border-top:1px dashed #00cc33;
+}

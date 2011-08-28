@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+	
+<title>{% block title %}{% endblock %}</title>
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+
+<!-- LOADING -->
+{% load adminmedia i18n  %}
+
+<!-- STYLESHEETS / EXTRASTYLE -->
+{% block stylesheets %}   
+{% endblock %}
+{% block extrastyle %}{% endblock %}
+{% csrf_token %}
+<!-- JAVASCRIPTS / EXTRAHEAD -->
+
+<link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/resources/css/ext-all.css" />
+
+
+<script src="/smedia/js/ext-4/ext-all-debug.js"></script>
+<!-- a régler
+<script type="text/javascript" src="/smedia/js/extjs/src/locale/ext-lang-fr.js"></script>
+-->
+<!-- ext 3 compatibility -->
+<script src="/smedia/js/ext-4/compatibility/ext3-core-compat.js"></script>
+<script src="/smedia/js/ext-4/compatibility/ext3-compat.js"></script>
+
+<!-- gestion d'un bus de messages -->
+<script type="text/javascript" src="/smedia/js/progs/messages.js"></script>
+<!-- recuperation des donnees utilisateurs -->
+<script type="text/javascript">
+	var user={}
+	user.is_authenticated=false;
+	{% if user.is_authenticated %}
+		user.is_authenticated=true
+		user.id={{user.id}}
+		user.nom="{{user.last_name}}"
+		user.prenom="{{user.first_name}}"
+		//console.log(user);
+		user.est_prof=false;
+		{% if perms.application.est_prof %}
+			user.est_prof=true
+		{% endif %}
+		{% if perms.application.est_admin %}
+			user.is_admin=true
+		{% endif %}
+		// achanger +tard:
+		//user.is_admin=(user.id==3)
+	{% endif %}
+</script>
+{% block javascripts %}
+{% endblock %}
+{% block extrahead %}{% endblock %}
+
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+<!-- CONTAINER -->
+<div id="container">
+    
+    <!-- HEADER -->
+    {% if not is_popup %}
+    
+    {% endif %}
+    
+    <!-- BREADCRUMBS -->
+    {% block breadcrumbs %}{% endblock %}
+    
+    <!-- MESSAGES -->
+    {% if messages %}
+    <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+    {% endif %}
+    
+    <!-- CONTENT -->
+	<noscript>
+<br />
+<br />
+<em>Veuillez activer le Javascript de votre navigateur s'il vous plaît!</em>
+<br />
+<br />
+</noscript>
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+		
+        {% endblock %}
+		<div id="divppal"></div>
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    </div>
+    <!-- FOOTER -->
+    {% block footer %}<div id="footer"></div>{% endblock %}
+    
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Hello prof</title>
+ 
+    <link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/resources/css/ext-all.css">
+	
+	
+	<link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/examples/ux/grid/css/GridFilters.css">
+	<link rel="stylesheet" type="text/css" href="/smedia/js/ext-4/examples/ux/grid/css/RangeMenu.css">
+	<link rel="stylesheet" type="text/css" href="/smedia/css/icons.css">	
+	<link rel="stylesheet" type="text/css" href="/smedia/js/GestComp/css/Prof.css">
+	
+    <!--
+	<script type="text/javascript" src="/smedia/js/ext-4/ext-debug.js"></script>
+	-->
+	<script type="text/javascript" src="/smedia/js/ext-4/ext-all-debug.js"></script>
+	<script type="text/javascript" src="/smedia/js/ext-4/locale/ext-lang-fr.js"></script>
+	<script type="text/javascript" src="/smedia/js/mon-locale-fr-ext4.js"></script>
+	<script type="text/javascript" src="/smedia/js/GestComp/override/Grouping.js"></script>
+	<script type="text/javascript">
+	 	
+		var user={}
+		user.is_authenticated=false;
+		{% if user.is_authenticated %}
+			user.is_authenticated=true
+			user.id={{user.id}}
+			user.nom="{{user.last_name}}"
+			user.prenom="{{user.first_name}}"
+			//console.log(user);
+			user.est_prof=false;
+			{% if perms.application.est_prof %}
+				user.est_prof=true
+			{% endif %}
+			{% if perms.application.est_admin %}
+				user.is_admin=true
+			{% endif %}
+		
+		{% endif %}
+	</script>
+
+	<script type="text/javascript" src="/smedia/js/GestComp/Application_prof.js"></script>
+	
+</head>
+<body></body>
+</html>

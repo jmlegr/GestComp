@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources/urls.py
+END
+tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources/tests.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources/__init__.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources/views.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources/models.py
+END
+fields.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/16/trunk/GestComp/GestComp/ressources/fields.py
+END

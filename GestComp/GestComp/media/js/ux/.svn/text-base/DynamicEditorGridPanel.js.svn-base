@@ -1,0 +1,331 @@
+//Ext.ux.DynamicGridPanel = Ext.extend(Ext.grid.GridPanel, {
+/*
+ * Dynamicgridpanel des résultats des évaluations
+ */
+ 
+var reg_d4="^(a\\+|a|na|ec\\+|ec\\-)";
+var reg_faits="(/([0-9]+(\\.?[0-9]+)?))?$";
+var reg_score="^(([0-9]+(\\.[0-9]+)?)(%)?)";
+
+var resultat_regexp=new RegExp("("+reg_d4+"|"+reg_score+")"+reg_faits,"i");
+ed = Ext.extend(Ext.form.TextField,{
+				maskRe:/[0-9/.%aecn\+\-]/i, 
+				regex: resultat_regexp,
+				regexText: "Formes acceptées : 5.2 ou 5.2% ou 5.2/10 ou 5.2%/10",
+				selectOnFocus:true,
+									//validator: function(e,r,s) {console.log('validator',e,r,s,this.isDirty()); return true},
+									//getValue: function(e) {console.log('gety',e,this); return this.value},
+               
+				initComponent: function() {
+					var config={
+						/*						
+						listeners: {
+							'change':function(t){console.log('change',t.id)},
+							'valid':function(t){console.log('valid',t.id)}
+						}
+						*/
+					
+					}; //eo config
+					Ext.apply(this, Ext.apply(this.initialConfig, config));
+					ed.superclass.initComponent.apply(this, arguments);
+					
+				}
+        });
+Ext.ux.DynamicGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
+
+	initComponent : function() {
+		/**
+		 * Default configuration options.
+		 * 
+		 * You are free to change the values or add/remove options. The
+		 * important point is to define a data store with JsonReader without
+		 * configuration and columns with empty array. We are going to setup our
+		 * reader with the metaData information returned by the server. See
+		 * http://extjs.com/deploy/dev/docs/?class=Ext.data.JsonReader for more
+		 * information how to configure your JsonReader with metaData.
+		 * 
+		 * A data store with remoteSort = true displays strange behaviours such
+		 * as not to display arrows when you sort the data and inconsistent ASC,
+		 * DESC option. Any suggestions are welcome
+		 */
+		
+		var config = {
+			viewConfig : {
+				//forceFit : true
+			},
+			//enableColLock : true,
+			//editor:ed,
+			
+			loadMask : true,
+			border : false,
+			stripeRows : true,
+			clicksToEdit:'auto',
+			
+			//autoScroll:true,
+			//ds : new Ext.data.Store({
+			ds : new Ext.data.JsonStore({
+						url : this.storeUrl, 
+						storeId:this.storeID || 'store',
+						//autoSave:true,
+						baseParams:{test:'ok'}, autoLoad:false,
+						successProperty:'success',messageProperty:'errorMessage',root:'data',
+						listeners: {
+							'exception':function() {
+								GestComp.Bus.fireEvent('erreur',
+									'ERREUR DE CHARGEMENT DES RESULTATS','n°'+arguments[3].params.id,true);
+								this.removeAll();
+								//TODO:méssage d'erreur explicite/class erreur sur header?
+								},					
+							
+						},
+						//reader : new Ext.data.JsonReader(),		
+						//writer: new Ext.data.JsonWriter({url:'/evaluation/modif_resultats'}),
+						//listeners: [{
+						//'beforesave':function(e,d) {console.log('beforesave',d)},
+						//'datachanged':function(e) {console.log('datacganged')},
+						//'update':function(s,r,op) {console.log('update',r,op)},
+						
+						//}]
+					}),
+			colModel : new Ext.ux.grid.LockingColumnModel([]),
+			view: new Ext.ux.grid.LockingGridView()
+		};
+		Ext.apply(this, config);
+		Ext.apply(this.initialConfig, config);
+		Ext.ux.DynamicGridPanel.superclass.initComponent.apply(this, arguments);
+		
+		
+	},
+	onSave: function() {
+		var store=this.store
+		var modified = store.getModifiedRecords();
+		if (modified.length > 0) {
+			var recordsToSend = [];			
+			Ext.each(modified, function(record) {
+				recordsToSend.push(record.getChanges());
+				//recordsToSend.push(record.data.eleve_id) //: pas nécessaire, on a l'id de la compétence_evaluée
+			});
+			/* 
+			var grid = Ext.getCmp('myEditorGrid'); // 3
+			grid.el.mask('Updating', 'x-mask-loading'); 
+			grid.stopEditing();
+			*/ 
+			//recordsToSend = Ext.encode(recordsToSend); 
+			
+			var el=this.el
+			el.mask('sauvegarde...',"x-mask-loading")
+			Ext.Ajax.request({ 
+				
+				url: 'evaluations/modif_resultats', 
+				jsonData: {data: recordsToSend},
+				//callback: function(o,s,r) {console.log('callback',o,s,r.responseText.decode())},
+				success : function(result,response) { 
+					el.unmask();
+					json=Ext.decode(result.responseText)
+					if (json.success) {
+						store.commitChanges();
+						GestComp.Bus.fireEvent('message','Gestion eval',json.msg)
+					}
+					else {
+						r='<div style="padding-left:3em;">';
+						
+						for (msg in json.errorMessage) {
+							r+='<li><i>'+msg+'</i>::' +json.errorMessage[msg]+'</li>'
+						}
+						r+='</div>'
+						GestComp.Bus.fireEvent('erreur','Gestion Eval: ERREUR',r,true)
+						Ext.Msg.alert('Erreur',r)
+					}
+					
+					 
+				} 
+			}); 
+		}
+		else GestComp.Bus.fireEvent('message','Gestion Evaluation','aucune donnée modifiée')
+	},
+	onCellclick: function(grid,rowIndex,colIndex,e) {
+		//a supprimer puisque ça ne serta à rien
+		var record = grid.getStore().getAt(rowIndex);  // Get the Record
+    	var fieldName = grid.getColumnModel().getDataIndex(colIndex); // Get field name
+    	
+    	donnees='donnees'+fieldName.substring(fieldName.indexOf('_'))
+    	//var data = record.get(donnees);
+    	
+		},
+	onAfteredit: function(e) {
+						//met a jour les différents champs de donnees suivant ce qui a été entré (ex 2%/10 ou EC+/20)						
+						//console.log('apres edit'); console.log(e.record.get(e.field),e)
+						donnees='donnees'+e.field.substring(e.field.indexOf('_'))
+						rec_copie=e.record.get(donnees)
+						
+						// on fait une copie pour que le changement soit bien noté (isModified() )
+						// note : ne fonctionne que pour une copie simple, sans objets ni methodes
+						var rec=new Object()
+						for (var i in rec_copie) rec[i]=rec_copie[i]
+						// on filtre avec la regexp
+						tab=resultat_regexp.exec(e.record.get(e.field))
+						// en 2 : a ou na ou ec+ ou ec-
+						// en 4 : valeur du score
+						// en 6 : %
+						// en 8 : valeur nb_faits
+						if (tab != null) {
+							rec.methode=(tab[2]?"d4":(tab[6]?"po":"pr"))
+							if (tab[8]) {rec.nb_faits=tab[8]}
+							else rec.nb_faits=(rec.nb_faits!='')?rec.nb_faits:rec.items
+							if (tab[2]) {
+								acquis=tab[2].toUpperCase();
+								field=acquis
+								rec.field=field
+								switch (acquis) {
+									// on calcule le score
+									case 'A+' :
+										rec.score=1*(rec.detail?rec.nb_faits:rec.items)
+										break;
+									case 'A' : 
+										rec.score=.94*(rec.detail?rec.nb_faits:rec.items)
+										break
+									case 'NA':
+										rec.score=.24
+										break
+									case 'EC+':
+										rec.score=.74*(rec.detail?rec.nb_faits:rec.items)
+										break
+									case 'EC-':
+										rec.score=.49*(rec.detail?rec.nb_faits:rec.items)
+										break
+								}
+							}
+							else if (tab[6]) {
+								// on calcule le score : du pourcentage au score
+								if (rec.detail) {if (rec.nb_faits=='') rec.nb_faits=rec.items}
+								field=tab[4]+'%'
+								rec.score=tab[4]*(rec.detail?rec.nb_faits:rec.items)/100.0
+								rec.field=tab[4]+'%'								
+							}
+							else {
+								rec.score=tab[4];
+								field=rec.score
+								rec.field=field
+							}
+						} else field='--'
+						field+='/'+rec.nb_faits	
+						bareme=rec.bareme?rec.bareme:rec.items
+						if (rec.detail && rec.nb_faits) {
+							rec.points_calcules=rec.score*rec.bareme/rec.nb_faits
+						} else {
+							
+							rec.points_calcules=rec.score*rec.bareme/rec.items
+						}
+						
+						e.record.set(donnees,rec)				
+						
+						// necessaire pour vahgner effectivemnt. Pourquoi? 
+						// 
+						e.record.set(e.field,"jkk"); e.record.set(e.field,field) 
+						//console.log(donnees,e.record.get(donnees))
+						// acces a la valeur originale : console.log('ancien:',e.record.modified[e.field])
+						/*
+						
+						modified=this.store.getModifiedRecords();
+						console.log('modife',modified)
+						for (var i=0;i<modified.length;i++) {
+							console.log(modified[i].getChanges())
+						}
+						*/
+						//on signale au proprio la fin de l'edition -> le record est a jour
+						//console.log('test:',e.record)
+						this.refOwner.fireEvent('finedit',e)
+						
+	},
+						
+	onRender : function(ct, position) {
+		this.colModel.defaultSortable = true;
+		
+		Ext.ux.DynamicGridPanel.superclass.onRender.call(this, ct, position);
+		
+		/**
+		 * Grid is not masked for the first data load. We are masking it while
+		 * store is loading data
+		 */
+		//this.el.mask('Chargement...');
+		/*
+		 
+		this.store.on('exception',function(t,type,action,o,r,arg){
+			console.warn(t,type,action,o,r,arg)
+			console.log(r.getAllResponseHeaders())
+			origine='ERREUR ('+type+', '+action+')'
+		})
+		*/
+		this.on('afteredit',function(e) {this.onAfteredit(e)});
+		this.on('cellclick',function(g,r,c,e) {this.onCellclick(g,r,c,e)});
+		this.store.on('beforeload',function(store,options){store.removeAll()});
+		this.store.on('load',function(store,records,options){
+			GestComp.Bus.fireEvent('message','Résultats évaluation n°'+options.params.id,'Chargés')
+			});
+		this.store.on('metachange', function() {
+					/**
+					 * Thats the magic! <img
+					 * src="http://erhanabay.com/wp-includes/images/smilies/icon_smile.gif"
+					 * alt=":)" class="wp-smiley">
+					 * 
+					 * JSON data returned from server has the column definitions
+					 */
+					if (typeof(this.store.reader.jsonData.columns) === 'object') {						
+						var columns = [];
+						/**
+						 * Adding RowNumberer or setting selection model as
+						 * CheckboxSelectionModel We need to add them before
+						 * other columns to display first
+						 */
+						if (this.rowNumberer) {
+							columns.push(new Ext.grid.RowNumberer());
+						}
+						if (this.checkboxSelModel) {
+							columns.push(new Ext.grid.CheckboxSelectionModel());
+						}
+						
+						Ext.each(this.store.reader.jsonData.columns, function(column) {	
+									column.renderer=eval(column.renderer);
+									column.tpl=eval(column.tpl)
+									if ((typeof(column.editable)!='undefined') && column.editable) {
+										if (typeof(column.editor)!='undefined') {
+											column.editor=eval(column.editor)}
+										else {
+											//column.editor=new Ext.form.TextField()
+											column.editor=new ed
+										}
+									}
+									
+									columns.push(column);
+								});
+						/**
+						 * Setting column model configuration
+						 */
+						this.getColumnModel().setConfig(columns);
+						
+						// on convertit les convert:
+						i=0
+						Ext.each(this.store.fields.items,function (item) {	
+							if (item.convert != null) {item.convert=eval(item.convert)};
+							
+							//console.log(i++,'-',item);
+						})
+					}
+					/**
+					 * Unmasking grid
+					 */
+					this.el.unmask();
+				}, this);
+
+
+		//this.store.on('update',	function(s,r,op) {console.log('update',s,r,op,r.dirty)});
+		//this.store.on('beforesave',function(e,d) {console.log('beforesave',d)});
+		//this.store.on('datachanged',function(e) {console.log('datacganged',e)});
+		//this.store.on('clear',function(e,r) {console.log('clear',e,r)});
+		/**
+		 * And finally load the data from server!
+		 */
+		//this.store.load({params:this.params});
+	}
+});
+Ext.reg('dynamiceditorgridpanel',Ext.ux.DynamicGridPanel);

@@ -1,0 +1,71 @@
+<!-- $Revision$ -->
+<!-- Dernière modification $Date$ -->
+{% extends "base.html" %}
+{% block javascripts %}
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="/smedia/js/extjs/examples/ux/css/LockingGridView.css">
+<link rel="stylesheet" type="text/css" href="/smedia/js/ux/gridfilters/css/GridFilters.css">
+<link rel="stylesheet" type="text/css" href="/smedia/js/ux/gridfilters/css/RangeMenu.css">
+<link rel="stylesheet" type="text/css" href="/smedia/css/icons.css">
+<link rel="stylesheet" type="text/css" href="/smedia/css/styles.css">
+
+<script type="text/javascript" src='smedia/js/extjs/examples/ux/LockingGridView.js' ></script>
+<script type="text/javascript" src='smedia/js/extjs/examples/ux/FieldLabeler.js' ></script>
+	
+	<script type="text/javascript" src="/smedia/js/gestion_competences/affichage_arbre_competences.js"></script>
+	<script type="text/javascript" src="/smedia/js/gestion_competences/creation_liens_competences.js"></script>
+	<script type="text/javascript" src="/smedia/js/creation_evaluation/PiliersStore.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/CompetencesStore.js"></script>   
+	<script type="text/javascript" src="/smedia/js/progs/comboStores.js"></script> 
+	<script type="text/javascript" src="/smedia/js/affichage_competences/ResultatsEleveStore.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/formCompetence.ui.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/formCompetence.js"></script>    
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/Grille_Competences.ui.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/Grille_Competences.js"></script>    
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/panelCompetencesSelectionnees.ui.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/panelCompetencesSelectionnees.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/tabpanelCompetences.ui.js"></script>
+    <script type="text/javascript" src="/smedia/js/creation_evaluation/tabpanelCompetences.js"></script>
+	<link rel="stylesheet" type="text/css"href="/smedia/js/ux/FilterRow.css" />
+	<script type="text/javascript" src="/smedia/js/ux/FilterRow.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/CheckColumn.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/menu/ListMenu.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/menu/RangeMenu.js"></script>	
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/GridFilters.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/filter/Filter.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/filter/ListFilter.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/filter/BooleanFilter.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/filter/DateFilter.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/filter/NumericFilter.js"></script>
+	<script type="text/javascript" src="/smedia/js/ux/gridfilters/filter/StringFilter.js"></script>
+		<script type="text/javascript" src="/smedia/js/progs/ResultatsEvalDynamicEditorGridPanel.js"></script>
+	<script type="text/javascript" src="/smedia/js/progs/elevesGrid.js"></script>	
+	<script type="text/javascript" src="/smedia/js/creation_evaluation/creationEval.ui.js"></script>
+	<script type="text/javascript" src="/smedia/js/creation_evaluation/creationEval.js"></script>
+	<script type="text/javascript" src="/smedia/js/affichage_competences/grille_resultats_eleve.js"></script>
+
+
+
+
+<script src="/smedia/js/progs/elevesGrid.js"></script>
+<script src="/smedia/js/progs/evaluationsGrid.js"></script>
+<script src="/smedia/js/progs/panelEvaluation.js"></script>
+<script src="/smedia/js/progs/panelEleve.js"></script>
+<script src="/smedia/js/progs/panelCompetences.js"></script>
+<script src="/smedia/js/progs/affichage_ppal.js"></script>
+
+<script src="/smedia/js/progs/gestcomp.js"></script>
+
+{% endblock %}
+{% block content %}
+<noscript>
+<br />
+<br />
+<em>Veuillez activer le Javascript de votre navigateur s'il vous plaît!</em>
+<br />
+<br />
+</noscript>
+{% endblock %}
+
+	
