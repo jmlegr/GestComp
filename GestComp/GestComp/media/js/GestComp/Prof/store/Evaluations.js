@@ -3,7 +3,7 @@ Ext.define('GestComp.Prof.store.Evaluations',{
 	autoLoad: true,
 	requires:['GestComp.Prof.model.Evaluation'],
 	model:'GestComp.Prof.model.Evaluation',
-	sorters:[{field:'date_modification',direction:'DESC'},],
+	sorters:[{property:'date_modification',direction:'DESC'},],
 	groupField:'perso',
 	
 });
