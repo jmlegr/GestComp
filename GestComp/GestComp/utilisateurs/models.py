@@ -100,6 +100,7 @@ class Eleve(models.Model):
         kwargs.update({'nom':nom,'prenom':prenom,'user':utilisateur})
         obj=cls(**kwargs)
         obj.save()   
+        return obj
         
 class Groupe(models.Model):
     nom=models.CharField(max_length=30,unique=True)
