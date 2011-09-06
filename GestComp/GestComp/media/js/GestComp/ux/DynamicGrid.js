@@ -3,6 +3,7 @@
     		alias:'widget.dynamicgrid',
     		initComponent: function(){
     			
+    			this.stateful=false;
     			this.metaStore = Ext.create('Ext.data.Store',{
     					autoLoad:false,
     					fields:['columns','data','metaData','fields'],
@@ -13,7 +14,7 @@
             					type: 'json',
             					root: 'toutdata'
         					},
-        				//extraParams:{id:199}
+        				//extraParams:{test:199}
     					},
     			});
     			/*
@@ -66,22 +67,24 @@
 				//var model=this.modelFactory('modelfx',[{name:'id'}])
 				//this.store=this.storeFactory('storefx',model,[{}])
 				//méthode 2:
-				this.store=this.storeFactory_bis('storefx',[],[{}]);
+				this.store=this.storeFactory_bis('storefx',[{name:'id'},{name:'bidon'}],[{}]);
 				
 				//création de colonnes bidons, 
 				// si on veut une grid lockable, il faut créer une colonne lockée
-				if (this.gridlockable) this.columns=[{text:'',dataIndex:'id',locked:true}];
+				if (this.gridlockable) this.columns=[{text:'a',dataIndex:'id',locked:true},{text:'b',dataIndex:'bidon',width:50}];
 				else this.columns=[];
-				
 				this.columnLines= true;
 				this.callParent();
-				
+				this.show()
 				this.metaStore.on('beforeload',function(st,op,opt){
 					//console.log('before',op.id, this.eval_charge_id?"chareg":"pas charge")
 					//this.eval_charge_id=op.id					
 					}
 					,this);
-					
+				
+				
+				/*
+				 	
 				this.metaStore.on('load',function(st,records,success,operation,options) {
 					this.eval_id=this.eval_charge_id
 					this.eval_charge_id=null
@@ -93,25 +96,27 @@
     				
     				if (typeof(this.modifStore)!="undefined") store=this.modifStore(store,records[0].get('metaData'))
     				// définition des colonnes, surcharge possible d'une colonne avec modifColumn
-					columns=this.getColumns(records[0])
+					var columns=this.getColumns(records[0])
 					
 					//reconfiguration
 					this.reconfigure(store,columns)
+					this.show()
 				},this)
+				*/
     		},
     		getColumns:function(record) { 
     			//console.log('cols par def')
-				columns = [{
+				var columns = [{
         			text: 'ID',
         			sortable: true,
         			dataIndex: 'eleve_id',
         			hidden:true,
         			locked:false,
         		}];
-        		cols=record.get('columns')
+        		var cols=record.get('columns')
         		for (var i = 0; i < cols.length; i++) {
         			// gestion des templates
-        			tpl=cols[i].tpl
+        			var tpl=cols[i].tpl
         			if (tpl && cols[i].xtype=='templatecolumn' && tpl.indexOf('Ext.XTemplate')!=-1) tpl=eval(tpl)
         			if (typeof(cols[i].renderer)!='undefined') {
         				eval("renderer="+cols[i].renderer)
@@ -135,7 +140,21 @@
     		},
     		// modifie la colonne construite avant reconfigure
     		modifColumn:function(column,columnRecue,index) {return column},
-    		reload:function(id) {this.metaStore.load(extraParams={id:id})}
+    		reload:function(id) {this.metaStore.load(
+    			{	id:id,	
+    			params:{test:200},
+    				scope:this,
+    				callback:function(records,op,success) {
+    					console.info('charge!',this,records)
+    					var store=this.storeFactory_bis('storefx',records[0].get('fields'),records[0].get('data'))
+    					if (typeof(this.modifStore)!="undefined") store=this.modifStore(store,records[0].get('metaData'))
+    					var columns=this.getColumns(records[0])
+    					//reconfiguration
+						this.reconfigure(store,columns)
+						this.show()    					
+    				}
+    			})
+    		}
  
     	});
 

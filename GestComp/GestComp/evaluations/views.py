@@ -576,7 +576,8 @@ def resultats_eval(request):
                 data_eleve[indexDonnees[resultat_eleve.numero]]['date_evaluation']=''
             data_eleve[indexResultat[resultat_eleve.numero]]=calc
         data.append(data_eleve)
-    return { "toutdata":{
+    if 'test' in request.GET:
+        return { "toutdata":{
                          "metaData": {
                                       "root":"data",
                                       "id":"eleve_id",
@@ -589,7 +590,16 @@ def resultats_eval(request):
                         'success': True
                         }
             }
-
+    else:
+        return {'metaData':{'root':'data',
+                            'fields':fields,
+                            'columns':columns,
+                            'eval':{'id':eval.id,'description':eval.description,'note':eval.a_note}
+                            },
+                'success':True,
+                'data':data,
+                
+                }
 @render_to_json()
 def modif_resultats(request):
     """

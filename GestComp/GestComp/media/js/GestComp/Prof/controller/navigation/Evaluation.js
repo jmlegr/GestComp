@@ -14,8 +14,11 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     	ref:'resultats',
     	selector:'evaluation_affichage #tab-resultats'
     },{
-    	ref:'autres',
-    	selector:'evaluation_affichage #tab-autres'
+    	ref:'general',
+    	selector:'evaluation_affichage #tab-autres > #infos_eval_general'
+    },{
+    	ref:'detail',
+    	selector:'evaluation_affichage #tab-autres > #infos_eval_detail'    
     }],
     
     stores:['Evaluations'],
@@ -38,11 +41,24 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     			}    			
     		}
     	});		
+    	this.control({
+    		'evaluation_resultats': {
+    			
+    			'reconfigure':function(a,b,c,d){
+    				console.log('getResult',this.getResultats())
+    				if (this.getResultats().eval) {
+    					this.getDetail().tpl.overwrite(this.getDetail().body,this.getResultats().eval)
+    				} 
+
+    			}
+    		}
+    	})
     	
     },
     selectClickEvaluation:function(view,record,item,index){    	
-    	this.getAffichage().updateTitle(record);    	
-    	this.getAutres().tpl.overwrite(this.getAutres().body,record.data)
+    	this.getAffichage().updateTitle(record);  
+    	//console.log('tpmaplte',this.getGeneral().body)
+    	//this.getGeneral().tpl.overwrite(this.getGeneral().body,record.data)
     	this.getResultats().reload(record.get('id'))
  		
  	},

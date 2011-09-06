@@ -12,14 +12,23 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 			title:'Résultats',
 			id:'tab-resultats',
 		},{
-			
+			layout: 'border',
 			title:'Autres',
 			id:'tab-autres',
 			disabled:true,
-			tpl:'<tpl> <p><b>{nom}</b> (n°{id})</p>'+
+			items:[{
+				region:'center',flex:1,
+				id:'infos_eval_general',
+				tpl:'<tpl> <p><b>{nom}</b> (n°{id}) créée par <i>{user}</i></p>'+			
 				'<tpl if="date_evaluation"><p>effectuée le {date_evaluation:date("l d F Y")}</p></tpl>'+
 				'<p> modifiée le {date_modification:date("l d F Y")}'+
 				' à {date_modification:date("G:i")}</p></tpl>'
+				},{
+					region:'south',flex:1,
+					id:'infos_eval_detail',
+					tpl: '<tpl><tpl if="note"><p><b>Notée</b></p></tpl>'+
+						'Description: {description}</tpl>'
+				}]
 			
 		}];
 		

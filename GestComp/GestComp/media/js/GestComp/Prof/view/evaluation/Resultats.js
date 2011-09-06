@@ -1,12 +1,20 @@
 Ext.define('GestComp.Prof.view.evaluation.Resultats',{	
-	extend:'GestComp.ux.DynamicGrid',
+	extend:'GestComp.ux.DynamicGrid2',
 	//store:'EvaluationResultats',
-	alias:'widget.evaluation_resultats',
-	modifColumn:function(column,columnRecue,index) {
-		//console.log('colonne',column.dataIndex)
+	alias:'widget.evaluation_resultats',	
+	initComponent :function() {
+		console.log(this.store)
+		this.callParent()
+		console.log(this.store)
+	},
+	modifColumn:function(col,index) {
+		column={}
+		column=col
+		console.log('modifcolonne',index,column.dataIndex)
 		if (column.dataIndex=="note") {
 			//column.renderer=function(v){return 'pas de note'+v.note_max}
 			//column.renderer=""
+			column.width=30;
 			column.tpl=new Ext.XTemplate('<tpl for="note">',	
 											'<span style="{[values.incomplet?"color:red":""]}" ',
 													'data-qtip="',
@@ -38,9 +46,9 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 										 	})
 			column.xtype="templatecolumn"
 		} else if (column.dataIndex.indexOf('resultat')!=-1) {
-			pos=column.dataIndex.indexOf('_')
-			champs='donnees'+column.dataIndex.substr(pos)
-			//console.log('donnee',column.dataIndex,champs)
+			var pos=column.dataIndex.indexOf('_')
+			var champs='donnees'+column.dataIndex.substr(pos)
+			
 			column.xtype="templatecolumn";
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
                 '<i data-qtip="{'+column.dataIndex+'}" class="{[this.getClass3(values)]}">{[this.score(values)]}</div></tpl>',
