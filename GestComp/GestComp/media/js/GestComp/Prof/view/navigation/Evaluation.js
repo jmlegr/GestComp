@@ -45,10 +45,12 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
            }
            ,filters
            ];
+		// TODO: voir si on peut cacher le groupedHeader evec les nouvelles versions ExtJs
+		// pour l'instant on rajoute l'attribut 'cachee' à la colonne qu'on veut cacher après render
         this.columns=[
 			{header:'id',dataIndex:'id',hidden:true},
 			{header:'créateur',dataIndex:'perso',
-    	    	xtype:'booleancolumn', width:30,sortable:true,
+    	    	xtype:'booleancolumn', width:30,sortable:true, cachee:true,
     	    	trueText: 'Moi',
             	falseText: 'Collègue', 
 				filterable:false,			  					
@@ -93,7 +95,14 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
 		    			value:{after:zedate}
 		                //value:{after:date_rentree}
 				})
-        		this.filters.getFilter('date_modification').setActive(true)
+        		this.filters.getFilter('date_modification').setActive(true);
+        		
+        		/*
+        		 * on cache les colonnes avec l'attribut "cachee"
+        		 */
+        		Ext.each(this.headerCt.gridDataColumns,function(c) {
+        				if (c.cachee) c.hide();
+        		});
         },this,{single:true})
         
         
