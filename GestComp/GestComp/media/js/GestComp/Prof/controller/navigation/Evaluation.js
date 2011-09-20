@@ -34,7 +34,7 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     	});
     	// mise à jour de la barre de titre, des infos élèves
     	this.control({
-    		'navigation_evaluation': {   		
+    		'navigation_evaluation': {   
     			'itemclick':{
     				fn:this.selectClickEvaluation,
     				buffer:1000 

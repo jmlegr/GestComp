@@ -22,7 +22,7 @@ Ext.define('GestComp.Prof.controller.Navigation', {
   
     },
     changeAffichage:function(item){    	
-    	this.getAffichage_principal().getLayout().setActiveItem(item.id)
+    	this.getAffichage_principal().getLayout().setActiveItem(item.id)    	
     }
 	
 });

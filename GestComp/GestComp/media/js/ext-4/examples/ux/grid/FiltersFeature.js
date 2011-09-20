@@ -480,6 +480,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
                 grid.saveState();
             }
             grid.fireEvent('filterupdate', me, filter);
+            
         }
     },
 
@@ -502,7 +503,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
      * @param {Object} store
      * @param {Object} options
      */
-    onLoad : function (store, options) {
+    onLoad : function (store, options) {    	
         store.filterBy(this.getRecordFilter());
     },
 

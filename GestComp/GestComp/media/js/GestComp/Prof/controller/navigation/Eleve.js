@@ -34,13 +34,8 @@ Ext.define('GestComp.Prof.controller.navigation.Eleve', {
     			}    			
     		}
     	});		
-    	this.control({
-    		'viewport': {
-    			beforehide:this.test
-    		}
-    	})
+    	
     },
-    test:function(){console.log('click'); alert('destroy')},
     selectClickEleve:function(view,record,item,index){    	
     	this.getAffichage().updateTitle(record);
  		this.getInfosEleve().updateDetail(record);

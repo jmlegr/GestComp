@@ -29,6 +29,15 @@
 	background-image: url(filter-row-icon.png);
     background-repeat: no-repeat;
     padding-left: 16px;
+
+	
+}
+
+.ux-filtered-columnTEST .x-column-header-inner {
+	background-image: url(filter-row-icon.png);
+    background-repeat: no-repeat;
+    padding-left: 16px;
+    color:red;
 	
 }
 
@@ -176,4 +185,7 @@
 .cssDefautFormBody {
 	 background-color: #f0ebe2;!important
 	 font-size: italic;
+}
+#filterCls {
+	background-color: #00ff00;!important
 }
