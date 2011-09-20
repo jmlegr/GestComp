@@ -3,18 +3,18 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 	//store:'EvaluationResultats',
 	alias:'widget.evaluation_resultats',	
 	initComponent :function() {
-		console.log(this.store)
+		//console.log(this.store)
 		this.callParent()
-		console.log(this.store)
+		
 	},
 	modifColumn:function(col,index) {
 		column={}
 		column=col
-		console.log('modifcolonne',index,column.dataIndex)
+		//console.log('modifcolonne',index,column.dataIndex)
 		if (column.dataIndex=="note") {
 			//column.renderer=function(v){return 'pas de note'+v.note_max}
 			//column.renderer=""
-			column.width=30;
+			column.width=40;
 			column.tpl=new Ext.XTemplate('<tpl for="note">',	
 											'<span style="{[values.incomplet?"color:red":""]}" ',
 													'data-qtip="',
@@ -102,7 +102,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		return column
 	},
 	modifStore:function(store,metaData) {
-		
+		//console.log('modifstore)')
 		// calcul des notes
 		store.each(function(record) {			
 				var note_max=record.get('note').note_max
@@ -179,6 +179,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				record.data.note.non_remplis=non_remplis
 				//records[i].data.note.resultat=(note!=null)?(Math.round(note*20*100/max)/100):null
 				record.data.note.resultat=(note!=null)?(note*note_max/max).toFixed(2):null
+						//console.log(record.data.note)
 				record.commit()				
 		})
 		//console.log('store',store,metaData)

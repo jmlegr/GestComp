@@ -1,0 +1,95 @@
+Ext.require(['Ext.data.*', 'Ext.grid.*']);
+
+Ext.define('dynamicModel', {
+    extend: 'Ext.data.Model',
+	fields: [ ]	// are defined in the JSON response metaData
+});
+
+Ext.define('GestComp.ux.DynamicGrid2',{
+	extend:'Ext.grid.Panel',
+	alias:'widget.dynamicgrid',
+	//mixins: {lockable:'Ext.grid.Lockable'},
+	initComponent: function(){
+		//this.lockable=true;
+		this.stateful=false;
+		this.store = Ext.create('Ext.data.JsonStore', {
+			storeId:'teststore',
+			autoLoad: false,
+			//autoSync: true,
+			model: 'dynamicModel',			
+			proxy: {
+				type: 'ajax',
+				url : 'evaluations/resultats_eval',
+				reader: {
+					type: 'json', 
+					//root: 'toutdata'
+				},
+			}
+		});
+        //this.columns= [{text:'test',dataIndex:'col1',width:30},{text:'truc',dataIndex:'col2'}]
+		
+		this.columns={
+				defaults: {
+				locked:true,
+				field: {
+					xtype: 'textfield'
+				}
+			}
+		};	
+		this.dockedItems= [{
+            xtype: 'toolbar',
+            items: [{
+                text: 'Add',
+                iconCls: 'icon-add',
+                handler: function(){
+					store.insert(0, new dynamicModel());
+                    rowEditing.startEdit(0, 0);
+                }
+            }, '-', {
+                text: 'Delete',
+                iconCls: 'icon-delete',
+                handler: function(){
+                    var selection = grid.getView().getSelectionModel().getSelection()[0];
+                    if (selection) {
+                        store.remove(selection);
+                    }
+                }
+            }]
+        }];
+		this.callParent()
+		
+		this.store.on('load',function(store,records,success,op) {
+			if (typeof(this.modifStore)!="undefined") store=this.modifStore(store,records[0].get('metaData'))
+			var cols=this.getColumns(records[0].store.proxy.reader.columns)
+			this.eval=records[0].store.proxy.reader.eval
+			this.reconfigure(this.store,cols)
+			//this.show()   
+		},this)
+		this.store.on('beforeload',function() {
+			// nécessaire car il y a un overwrite des tpls avant la fin du load... curieux
+			// bug levé dans la 4.0.5?
+			for (var i=0;i<this.columns.length;i++) {
+				this.columns[i].tpl='<tpl>rien</tpl>'
+			}
+			this.reconfigure(this.store,this.columns)
+		},this)
+		
+	},
+
+	modifColumns:function(columnRecue,index) {return columnRecue},
+	getColumns:function(cols) {
+		var columns=[];
+		for (var i = 0; i < cols.length; i++) {			
+			columns[i]=this.modifColumn(cols[i],i)
+		}
+		return columns
+	},
+	reload:function(id) {
+			this.store.load(
+					{	
+						id:id				 					
+					}
+			)
+	}   
+	
+});
