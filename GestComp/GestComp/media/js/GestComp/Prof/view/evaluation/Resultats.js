@@ -4,7 +4,48 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 	alias:'widget.evaluation_resultats',	
 	initComponent :function() {
 		//console.log(this.store)
-		this.callParent()
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
+		this.plugins=[cellEditing];
+		this.dockedItems= [{
+            xtype: 'toolbar',
+            items: [{
+                text: 'Editer',
+                id:'btn_editer',
+                iconCls: 'icon-pencil',
+                enableToggle: true,
+                listeners: {
+                          'toggle': {
+                        	  fn :function(b,pressed) {
+                        		  for (var i=0; i<this.headerCt.getColumnCount();i++) {
+                        			  var ed=this.headerCt.getHeaderAtIndex(i).getEditor()
+                        			  if (ed) {
+                        				  if (pressed) ed.enable()			
+                        				  else ed.disable()
+                        			  }
+                        		  }
+                        	  	},
+                        	  scope:this
+                          }
+                }
+            }, '-', {
+                text: 'Delete',
+                iconCls: 'icon-delete',
+                handler: function(){
+                    var selection = grid.getView().getSelectionModel().getSelection()[0];
+                    if (selection) {
+                        store.remove(selection);
+                    }
+                }
+            }]
+        }];
+		this.callParent();
+		this.on('edit',function(e) {this.onAfteredit(e)});
+		this.on('reconfigure',function(){
+			//reset sur le bouton editer,sans relayer l'éevenement
+			this.down('#btn_editer').toggle(false,true)
+		})
 		
 	},
 	modifColumn:function(col,index) {
@@ -48,7 +89,11 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		} else if (column.dataIndex.indexOf('resultat')!=-1) {
 			var pos=column.dataIndex.indexOf('_')
 			var champs='donnees'+column.dataIndex.substr(pos)
-			
+			column.editor= {
+	                xtype: 'textfield',
+	                allowBlank: false,
+	                disabled:true
+	            }
 			column.xtype="templatecolumn";
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
                 '<i data-qtip="{'+column.dataIndex+'}" class="{[this.getClass3(values)]}">{[this.score(values)]}</div></tpl>',
@@ -184,5 +229,6 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		})
 		//console.log('store',store,metaData)
 		return store
-	}
+	},
+	onAfteredit: function(e) {console.log("after")}
 })

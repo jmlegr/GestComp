@@ -11,6 +11,7 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 	//mixins: {lockable:'Ext.grid.Lockable'},
 	initComponent: function(){
 		//this.lockable=true;
+		
 		this.stateful=false;
 		this.store = Ext.create('Ext.data.JsonStore', {
 			storeId:'teststore',
@@ -31,31 +32,13 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 		this.columns={
 				defaults: {
 				locked:true,
-				field: {
+				/*field: {
 					xtype: 'textfield'
-				}
+				}*/
 			}
 		};	
-		this.dockedItems= [{
-            xtype: 'toolbar',
-            items: [{
-                text: 'Add',
-                iconCls: 'icon-add',
-                handler: function(){
-					store.insert(0, new dynamicModel());
-                    rowEditing.startEdit(0, 0);
-                }
-            }, '-', {
-                text: 'Delete',
-                iconCls: 'icon-delete',
-                handler: function(){
-                    var selection = grid.getView().getSelectionModel().getSelection()[0];
-                    if (selection) {
-                        store.remove(selection);
-                    }
-                }
-            }]
-        }];
+		var me=this
+		
 		this.callParent()
 		
 		this.store.on('load',function(store,records,success,op) {
@@ -90,6 +73,6 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 						id:id				 					
 					}
 			)
-	}   
+	}
 	
 });
