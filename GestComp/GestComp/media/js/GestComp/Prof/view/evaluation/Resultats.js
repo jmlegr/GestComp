@@ -87,12 +87,24 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 										 	})
 			column.xtype="templatecolumn"
 		} else if (column.dataIndex.indexOf('resultat')!=-1) {
+			var reg_d4="^(a\\+|a|na|ec\\+|ec\\-)";
+			var reg_faits="(/([0-9]+(\\.?[0-9]+)?))?$";
+			var reg_score="^(([0-9]+(\\.[0-9]+)?)(%)?)";
+			var reg_nonfait="^(nf)$"
+			var resultat_regexp=new RegExp(reg_nonfait +"|("+reg_d4+"|"+reg_score+")"+reg_faits,"i");
+			
 			var pos=column.dataIndex.indexOf('_')
 			var champs='donnees'+column.dataIndex.substr(pos)
+			var nb=column.nb_items
 			column.editor= {
 	                xtype: 'textfield',
 	                allowBlank: false,
-	                disabled:true
+	                disabled:true,
+	                maskRe:/[0-9/.%aecnf\+\-]/i, 
+					regex: resultat_regexp,
+					regexText: "Formes acceptées : 5.2 ou 5.2% ou 5.2/10 ou 5.2%/10, ou encore NA EC- EC+ A ou A+",
+					selectOnFocus:true,
+					//validator:function(o){console.info('valid:',o,nb); return true}
 	            }
 			column.xtype="templatecolumn";
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +

@@ -404,71 +404,14 @@ def resultats_eval(request):
         indexComp[comp_a_eval.numero]=comp_a_eval.competence_id
         if (comp_a_eval.items>1): st='s'
         else: st=''
-        fonc="""new Ext.XTemplate('<div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
-                '<i data-qtip="coucou" class="{[this.getClass3(values)]}">{[this.score(values)]}</div>',
-{ getClass: function(v) {
-                val=v.%(champs)s
-                if (val.detail) {
-                    p=val.score/val.items
-                    st= '<span class="imgdetail'
-                    if (p>=%(pa)s) st+=' imgdetailA"></span></span>'
-                    else if (p>=%(pecp)s) st+=' imgdetailEC2"></span></span>'
-                    else if (p>=%(pecm)s) st+=' imgdetailEC1"></span></span>'
-                    else st+=' imgdetailNA"></span></span>'
-                    
-                    }
-                else st= '</span>'
-                if (val.methode.toUpperCase()=="PO") return '<span height=14px class="testimg testimgPO">'+st
-                else if (val.methode.toUpperCase()=="PR") return '<span height=14px class="testimg testimgPR">'+st
-                else return '<span height=14px class="testimg testimgD4">'+st
-                },
-  getClass2: function(v) {
-                if (v.%(champs)s.score>2) {console.log('sup');return "cssAplus"}
-                else if (v.%(champs)s.score>1){return "cssA"}
-                else if (v.%(champs)s.score>0.5) {return "cssEC2"}
-                else if (v.%(champs)s.score>0) {return "cssEC1"}
-                else return "cssNA" 
-                },
- getClass3: function(v) {
-          val=v.%(champs)s
-          if (!val.field) return ""
-          if (val.nb_faits==='0') return "cssNF"
-          if (val.detail) diviseur=val.nb_faits||val.items
-                    else diviseur=val.items
-          p=val.score/diviseur
-          if (p>=%(pap)s) {return "cssAplus"}
-          if (p>=%(pa)s) {return "cssA"}
-          if (p>=%(pecp)s) {return "cssEC2"}
-          if (p>=%(pecm)s) {return "cssEC1"}
-          if (p>=0) return "cssNA"
-          return ""
-  },
-  score: function(v) {
-          val=v.%(champs)s;
-          if (val.nb_faits==="0") return 'Non Fait'
-          st = (val.field?val.field:'--') + '</i>';
-          if (val.detail) return st+'/'+(val.nb_faits||val.items)
-          else return st
-  },
-  remarques: function(v) {
-          val=v.%(champs)s;
-          return val.remarques?val.remarques:'aucune remarque'
-  }
-})""" % {'champs':indexDonnees[comp_a_eval.numero],
-         'pap':tpourcentageAcquisPlus,
-         'pa':tpourcentageAcquis,
-         'pecp':tpourcentageECplus,
-         'pecm':tpourcentageECmoins
-         } 
-        fonc='<tpl for="%s">test {score}/{items}</tpl>' % indexDonnees[comp_a_eval.numero]
         
-        header='<div data-qtip="%(nom)s (%(nb)u item%(st)s)">%(nom)s</div>' % {
+        header='<div data-qtip="<p>%(nom)s</p> (%(nb)u item%(st)s)">%(nom)s</div>' % {
                                     'nom':comps[comp_a_eval.competence_id].nom,
                                     'nb':comp_a_eval.items,
                                     'st':st}
         columns.append({"header":header,"dataIndex":indexResultat[comp_a_eval.numero],
-                                "xtype":'templatecolumn', "tpl":fonc,
-                                "width":65,'editable':editable,
+                                "xtype":'templatecolumn', 
+                                "width":65,'nb_items':comp_a_eval.items,
                                 "sortable":True                                             
                                })
         fields.append({"name":indexDonnees[comp_a_eval.numero]})
