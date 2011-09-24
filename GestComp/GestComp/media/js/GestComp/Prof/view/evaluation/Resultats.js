@@ -41,7 +41,8 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
             }]
         }];
 		this.callParent();
-		this.on('edit',function(e) {this.onAfteredit(e)});
+		this.on('edit',function(editor,e) {this.onAfteredit(editor,e)});
+		//this.on('validateedit',function(editor,e) {console.log('validate',e)});
 		this.on('reconfigure',function(){
 			//reset sur le bouton editer,sans relayer l'éevenement
 			this.down('#btn_editer').toggle(false,true)
@@ -91,11 +92,30 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 			var reg_faits="(/([0-9]+(\\.?[0-9]+)?))?$";
 			var reg_score="^(([0-9]+(\\.[0-9]+)?)(%)?)";
 			var reg_nonfait="^(nf)$"
-			var resultat_regexp=new RegExp(reg_nonfait +"|("+reg_d4+"|"+reg_score+")"+reg_faits,"i");
+			var resultat_regexp=new RegExp(reg_nonfait +"|("+reg_d4+"|"+reg_score+")"+reg_faits,"i");		
 			
 			var pos=column.dataIndex.indexOf('_')
 			var champs='donnees'+column.dataIndex.substr(pos)
 			var nb=column.nb_items
+			//function de validation
+			var validation=function(o) {
+				tab=resultat_regexp.exec(o)
+				// en 1:nf
+				// en 3 : a ou na ou ec+ ou ec-
+				// en 5 : valeur du score
+				// en 7 : %
+				// en 9 : valeur nb_faits
+				var erreur=false
+				if (tab) {
+					if (tab[9]) {
+						if (tab[9]>nb) return 'le nombre d\'items faits doit être \< '+nb
+						if (tab[5] && (tab[5]>tab[9])) return 'Le nombre d\'items doit être \< '+tab[9]
+					}
+					if (tab[5] && (tab[5]>nb)) return  'Le nombre d\'items doit être \< '+nb
+				}
+				return true
+			};
+			
 			column.editor= {
 	                xtype: 'textfield',
 	                allowBlank: false,
@@ -104,7 +124,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 					regex: resultat_regexp,
 					regexText: "Formes acceptées : 5.2 ou 5.2% ou 5.2/10 ou 5.2%/10, ou encore NA EC- EC+ A ou A+",
 					selectOnFocus:true,
-					//validator:function(o){console.info('valid:',o,nb); return true}
+					validator:validation
 	            }
 			column.xtype="templatecolumn";
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
@@ -242,5 +262,110 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		//console.log('store',store,metaData)
 		return store
 	},
-	onAfteredit: function(e) {console.log("after")}
+	onAfteredit: function(editor,e) {
+		//met a jour les différents champs de donnees suivant ce qui a été entré (ex 2%/10 ou EC+/20)						
+		console.log('apres edit',e);
+		donnees='donnees'+e.field.substring(e.field.indexOf('_'))
+		rec_copie=e.record.get(donnees)
+		// on fait une copie pour que le changement soit bien noté (isModified() )
+		// note : ne fonctionne que pour une copie simple, sans objets ni methodes
+		var rec=new Object()
+		for (var i in rec_copie) rec[i]=rec_copie[i]
+		
+		// on filtre avec la regexp
+		var reg_d4="^(a\\+|a|na|ec\\+|ec\\-)";
+		var reg_faits="(/([0-9]+(\\.?[0-9]+)?))?$";
+		var reg_score="^(([0-9]+(\\.[0-9]+)?)(%)?)";
+		var reg_nonfait="^(nf)$"
+		var resultat_regexp=new RegExp(reg_nonfait +"|("+reg_d4+"|"+reg_score+")"+reg_faits,"i");
+		tab=resultat_regexp.exec(e.record.get(e.field))
+		// en 1:nf
+		// en 3 : a ou na ou ec+ ou ec-
+		// en 5 : valeur du score
+		// en 7 : %
+		// en 9 : valeur nb_faits
+		if (tab != null) {
+			rec.methode=(tab[3]?"d4":(tab[7]?"po":"pr"))
+			if (tab[9]) {rec.nb_faits=tab[9]}
+			else if (!tab[1]) {rec.nb_faits=(rec.nb_faits!=0)?rec.nb_faits:rec.items
+			}
+			if (tab[3]) {
+				acquis=tab[3].toUpperCase();
+				field=acquis
+				rec.field=field
+				switch (acquis) {
+					// on calcule le score
+					case 'A+' :
+						rec.score=1*(rec.detail?rec.nb_faits:rec.items)
+						break;
+					case 'A' : 
+						rec.score=.94*(rec.detail?rec.nb_faits:rec.items)
+						break
+					case 'NA':
+						rec.score=.24
+						break
+					case 'EC+':
+						rec.score=.74*(rec.detail?rec.nb_faits:rec.items)
+						break
+					case 'EC-':
+						rec.score=.49*(rec.detail?rec.nb_faits:rec.items)
+						break
+				}
+			}
+			else if (tab[7]) {
+				// on calcule le score : du pourcentage au score
+				if (rec.detail) {if (rec.nb_faits=='') rec.nb_faits=rec.items}
+				field=tab[5]+'%'
+				rec.score=tab[5]*(rec.detail?rec.nb_faits:rec.items)/100.0
+				rec.field=tab[5]+'%'								
+			}
+			else if (tab[1]) {
+				rec.score="0"
+				rec.nb_faits='0'
+				field='NF'
+				rec.field=field
+			}
+			else {
+				rec.score=tab[5];
+				field=rec.score
+				rec.field=field
+			}
+			
+		} else {
+			field=''
+			rec.score=""
+			rec.nb_faits=rec.items
+			rec.field=field
+		}
+		field+='/'+rec.nb_faits	
+		bareme=rec.bareme?rec.bareme:rec.items
+		if (rec.score=='') rec.points_calcules=''
+		else {
+			if (rec.detail && rec.nb_faits!=0) {
+				rec.points_calcules=""+rec.score*rec.bareme/rec.nb_faits
+			} else {
+				rec.points_calcules=""+rec.score*rec.bareme/rec.items
+			}	
+		}
+		e.record.set(donnees,rec)				
+		
+		// necessaire pour vahgner effectivemnt. Pourquoi? 
+		// 
+		//e.record.set(e.field,"jkk"); e.record.set(e.field,field) 
+		//console.log(donnees,e.record.get(donnees))
+		// acces a la valeur originale : console.log('ancien:',e.record.modified[e.field])
+		/*
+		
+		modified=this.store.getModifiedRecords();
+		console.log('modife',modified)
+		for (var i=0;i<modified.length;i++) {
+			console.log(modified[i].getChanges())
+		}
+		*/
+		//on signale au proprio la fin de l'edition -> le record est a jour
+		//console.log('test:',e.record)
+		//console.log('fire finedit',e.record.dirty)
+		//this.refOwner.fireEvent('finedit',e)
+		
+},
 })
