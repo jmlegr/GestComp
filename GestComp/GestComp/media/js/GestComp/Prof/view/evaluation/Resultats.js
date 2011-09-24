@@ -122,7 +122,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 	                disabled:true,
 	                maskRe:/[0-9/.%aecnf\+\-]/i, 
 					regex: resultat_regexp,
-					regexText: "Formes acceptées : 5.2 ou 5.2% ou 5.2/10 ou 5.2%/10, ou encore NA EC- EC+ A ou A+",
+					regexText: "Formes acceptées : 5.2 ou 5.2% ou 5.2/10 ou 5.2%/10, ou encore NA EC- EC+ A ou A+/10",
 					selectOnFocus:true,
 					validator:validation
 	            }
