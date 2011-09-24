@@ -17,6 +17,10 @@ Ext.define('GestComp.Prof.view.navigation.Eleve',{
 			autoReload: false,
            }
            ];
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
+		this.plugins=[cellEditing];
 		this.columns=[
 				{header:'id',dataIndex:'id',hidden:true},
 				{header:'Nom',dataIndex:'nom',filterable:true,
@@ -32,6 +36,7 @@ Ext.define('GestComp.Prof.view.navigation.Eleve',{
 					}
 				},
 				{header:'classe',dataIndex:'classe',filterable:true,width:40,
+					
 				},
 				{header:'groupes',dataIndex:'groupes'},
 				{header:'liste groupes',dataIndex:'groupesliste',filterable:true,					
