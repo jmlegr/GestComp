@@ -376,7 +376,8 @@ def resultats_eval(request):
                     "locked": True,"sortable":True})
    
     fields=[]
-    fields.append({"name":"eleve_id"})
+    #fields.append({"name":"eleve_id"})
+    fields.append({"name":"id"})
     fields.append({"name":"nom"})
     fields.append({"name":"prenom"})
     fields.append({"name":"note"})
@@ -409,7 +410,7 @@ def resultats_eval(request):
                                     'nom':comps[comp_a_eval.competence_id].nom,
                                     'nb':comp_a_eval.items,
                                     'st':st}
-        columns.append({"header":header,"dataIndex":indexResultat[comp_a_eval.numero],
+        columns.append({"header":header,"dataIndex":indexResultat[comp_a_eval.numero],        
                                 "xtype":'templatecolumn', 
                                 "width":65,'nb_items':comp_a_eval.items,
                                 "sortable":True                                             
@@ -440,8 +441,9 @@ def resultats_eval(request):
         #ici if="incomplet" passe, if="bonus!=null" ne passe pas
         #on contourne avec {[values.bonus==null?truc:bidule]}
         
-        data_eleve={"eleve_id":eleve.id,"nom":eleve.nom,"prenom":eleve.prenom,"note":note}
-        logging.debug('eleve ',eleve.nom)
+        #data_eleve={"eleve_id":eleve.id,"nom":eleve.nom,"prenom":eleve.prenom,"note":note}
+        data_eleve={"id":eleve.id,"nom":eleve.nom,"prenom":eleve.prenom,"note":note}
+        logging.debug('eleve %s ' %eleve.nom)
         for resultat_eleve in res_eleve[eleve.id]:
             logging.debug('resultat eleve: ')
             data_eleve[indexResultat[resultat_eleve.numero]]={}
@@ -523,7 +525,8 @@ def resultats_eval(request):
         return { "toutdata":{
                          "metaData": {
                                       "root":"data",
-                                      "id":"eleve_id",
+                                      #"id":"eleve_id",
+                                      "id":"id",
                                       "eval_id":eval.id
                                       
                                       },
@@ -543,6 +546,7 @@ def resultats_eval(request):
                 'data':data,
                 
                 }
+
 @render_to_json()
 def modif_resultats(request):
     """
@@ -550,12 +554,17 @@ def modif_resultats(request):
     endtrée (json) -> data: [{résultat_***, donnees_****}]
     """
     data= simplejson.loads(request.raw_post_data)
-    #print len(s['data']),s['data'][0]
+    
   
+    
+    #si on envoie une seule donnee ce n'est pas une liste->on transforme
+    if isinstance(data['data'],dict):
+        data['data']=[data['data']]
+        
     # on vérifie chaque competence_evaluee
     liste_comps=[]
     for ligne in data['data']:
-        for comp_eval_donnees in ligne:           
+        for comp_eval_donnees in ligne:  
             if (comp_eval_donnees.find('donnees_')==0):
                 try:
                     comp_eval=Competence_evaluee.objects.get(id=ligne[comp_eval_donnees]['competence_eval_id'])
@@ -607,7 +616,8 @@ def modif_resultats(request):
                     comp_eval.bareme=comp_eval.items
                 # on valide le model
                 try:
-                    comp_eval.full_clean()
+                    comp_eval.full_clean(exclude=['eleve','competence','evaluation','user'])
+                    #comp_eval.clean()
                 except ValidationError as e:                    
                     #return {'success':False,'errorMessage':e.message_dict['__all__']}                
                     return {'success':False,'errorMessage':e.message_dict}
