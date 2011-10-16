@@ -6,6 +6,21 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 	title:'panel évaluation',	
 	
 	initComponent:function() {
+		this.tools=[{
+		    type:'refresh',
+		    tooltip: 'Refresh form Data',
+		    // hidden:true,
+		    handler: function(event, toolEl, panel){
+		        // refresh logic
+		    }
+		},
+		{
+		    type:'help',
+		    tooltip: 'Get Help',
+		    handler: function(event, toolEl, panel){
+		        // show help here
+		    }
+		}]
 		this.items=[{//xtype:'panel',
 			xtype:'evaluation_resultats',
 			gridlockable:true,   
