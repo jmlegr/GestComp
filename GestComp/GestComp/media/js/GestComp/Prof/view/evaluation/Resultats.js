@@ -7,6 +7,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
 	    });
+		var me=this;
 		this.plugins=[cellEditing];
 		this.dockedItems= [{
             xtype: 'toolbar',
@@ -38,7 +39,52 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                         store.remove(selection);
                     }
                 }
+            }, '-', {
+            	text: 'Sauvegarder',
+            	id:'btn_sauvegarder',
+                iconCls: 'icon-disk',
+                listeners:{
+                	'click': {
+                		fn: this.onSave,
+                			scope:this
+                	}
+                }
             }]
+		},{
+			 weight: 2,
+             xtype: 'toolbar',
+             dock: 'bottom',
+             items: [{
+                 xtype: 'tbtext',
+                 text: '<b>@cfg</b>'
+             }, '|', {
+                 text: 'autoSync',
+                 enableToggle: true,
+                 pressed: true,
+                 tooltip: 'When enabled, Store will execute Ajax requests as soon as a Record becomes dirty.',
+                 scope: this,
+                 toggleHandler: function(btn, pressed){
+                     this.store.autoSync = pressed;
+                 }
+             }, {
+                 text: 'batch',
+                 enableToggle: true,
+                 pressed: true,
+                 tooltip: 'When enabled, Store will batch all records for each type of CRUD verb into a single Ajax request.',
+                 scope: this,
+                 toggleHandler: function(btn, pressed){
+                     this.store.getProxy().batchActions = pressed;
+                 }
+             }, {
+                 text: 'writeAllFields',
+                 enableToggle: true,
+                 pressed: false,
+                 tooltip: 'When enabled, Writer will write *all* fields to the server -- not just those that changed.',
+                 scope: this,
+                 toggleHandler: function(btn, pressed){
+                     this.store.getProxy().getWriter().writeAllFields = pressed;
+                 }
+             }]
         }];
 		this.callParent();
 		this.on('edit',function(editor,e) {this.onAfteredit(editor,e)});
@@ -49,6 +95,21 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		})
 		
 	},
+	onSync: function(){
+        this.store.sync();
+    },
+
+    onDeleteClick: function(){
+        var selection = this.getView().getSelectionModel().getSelection()[0];
+        if (selection) {
+            this.store.remove(selection);
+        }
+    },
+
+    onAddClick: function(){
+       
+       
+    },
 	modifColumn:function(col,index) {
 		column={}
 		column=col
@@ -88,6 +149,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 										 	})
 			column.xtype="templatecolumn"
 		} else if (column.dataIndex.indexOf('resultat')!=-1) {
+		//} else if (column.dataIndex.indexOf('donnees')!=-1) {
 			var reg_d4="^(a\\+|a|na|ec\\+|ec\\-)";
 			var reg_faits="(/([0-9]+(\\.?[0-9]+)?))?$";
 			var reg_score="^(([0-9]+(\\.[0-9]+)?)(%)?)";
@@ -124,7 +186,11 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 					regex: resultat_regexp,
 					regexText: "Formes acceptées : 5.2 ou 5.2% ou 5.2/10 ou 5.2%/10, ou encore NA EC- EC+ A ou A+/10",
 					selectOnFocus:true,
-					validator:validation
+					validator:validation,
+					ignoreNoChange:true,
+					/*valueToRaw:function(v) {console.log('value',v,this); 
+						if (v) return v
+						}*/
 	            }
 			column.xtype="templatecolumn";
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
@@ -266,6 +332,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		//met a jour les différents champs de donnees suivant ce qui a été entré (ex 2%/10 ou EC+/20)						
 		console.log('apres edit',e);
 		donnees='donnees'+e.field.substring(e.field.indexOf('_'))
+		resultat='resultat'+e.field.substring(e.field.indexOf('_'))
 		rec_copie=e.record.get(donnees)
 		// on fait une copie pour que le changement soit bien noté (isModified() )
 		// note : ne fonctionne que pour une copie simple, sans objets ni methodes
@@ -285,7 +352,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		// en 7 : %
 		// en 9 : valeur nb_faits
 		if (tab != null) {
-			rec.methode=(tab[3]?"d4":(tab[7]?"po":"pr"))
+			rec.methode=(tab[3]?"d4":(tab[7]?"Po":"Pr"))
 			if (tab[9]) {rec.nb_faits=tab[9]}
 			else if (!tab[1]) {rec.nb_faits=(rec.nb_faits!=0)?rec.nb_faits:rec.items
 			}
@@ -347,25 +414,75 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				rec.points_calcules=""+rec.score*rec.bareme/rec.items
 			}	
 		}
-		e.record.set(donnees,rec)				
-		
-		// necessaire pour vahgner effectivemnt. Pourquoi? 
-		// 
-		//e.record.set(e.field,"jkk"); e.record.set(e.field,field) 
-		//console.log(donnees,e.record.get(donnees))
-		// acces a la valeur originale : console.log('ancien:',e.record.modified[e.field])
-		/*
-		
-		modified=this.store.getModifiedRecords();
-		console.log('modife',modified)
-		for (var i=0;i<modified.length;i++) {
-			console.log(modified[i].getChanges())
+		for (var key in rec_copie) {
+			if (rec_copie[key]!==rec[key]) {console.log('different',key)}
 		}
-		*/
+		e.record.set(donnees,rec)	
+		e.record.set(resultat,field)
+		//e.record.set(e.field,"jkk"); e.record.set(e.field,field) 
+		console.log('modified',e.record.isModified(donnees))
 		//on signale au proprio la fin de l'edition -> le record est a jour
 		//console.log('test:',e.record)
 		//console.log('fire finedit',e.record.dirty)
 		//this.refOwner.fireEvent('finedit',e)
+	},
+	onSave: function() {
+		var getModifiedRecords=function(store) {
+			liste=[]
+			Ext.each(store.data.items,function(e){
+				if (e.dirty) {
+					console.log('changes:',e.getChanges())
+					liste.push({eleve_id:e.data.eleve_id,modif:e.modified})
+				}
+			})
+			return liste
+		}
+		var store=this.store
+		console.log(this,store,getModifiedRecords(store))
+		return
+		var modified = store.getModifiedRecords();
+		if (modified.length > 0) {
+			var recordsToSend = [];			
+			Ext.each(modified, function(record) {
+				recordsToSend.push(record.getChanges());
+				//recordsToSend.push(record.data.eleve_id) //: pas nécessaire, on a l'id de la compétence_evaluée
+			});
+			/* 
+			var grid = Ext.getCmp('myEditorGrid'); // 3
+			grid.el.mask('Updating', 'x-mask-loading'); 
+			grid.stopEditing();
+			*/ 
+			//recordsToSend = Ext.encode(recordsToSend); 
+			
+			var el=this.el
+			el.mask('sauvegarde...',"x-mask-loading")
+			Ext.Ajax.request({ 
+				
+				url: 'evaluations/modif_resultats', 
+				jsonData: {data: recordsToSend},
+				//callback: function(o,s,r) {console.log('callback',o,s,r.responseText.decode())},
+				success : function(result,response) { 
+					el.unmask();
+					json=Ext.decode(result.responseText)
+					if (json.success) {
+						store.commitChanges();
+						GestComp.Bus.fireEvent('message','Gestion Evaluation',json.msg)
+					}
+					else {
+						r='<div style="padding-left:3em;">';
+						
+						for (msg in json.errorMessage) {
+							r+='<li><i>'+msg+'</i>::' +json.errorMessage[msg]+'</li>'
+						}
+						r+='</div>'
+						GestComp.Bus.fireEvent('erreur','Gestion Eval: ERREUR',r,true)
+						Ext.Msg.alert('Erreur',r)
+					}
+					
+					 
+				} 
+			}); 
+		}
 		
-},
+	},
 })

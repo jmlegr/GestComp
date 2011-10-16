@@ -11,21 +11,41 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 	//mixins: {lockable:'Ext.grid.Lockable'},
 	initComponent: function(){
 		//this.lockable=true;
+
 		
+		this.selType= 'cellmodel';
 		this.stateful=false;
-		this.store = Ext.create('Ext.data.JsonStore', {
+		this.store = Ext.create('Ext.data.Store', {
 			storeId:'teststore',
 			autoLoad: false,
-			//autoSync: true,
+			autoSync: true,			
 			model: 'dynamicModel',			
 			proxy: {
 				type: 'ajax',
-				url : 'evaluations/resultats_eval',
+				api: {
+					read: 'evaluations/resultats_eval',
+					create :'evaluations/create_eval',
+					update:'evaluations/modif_resultats',
+					destroy:'evaluations/supprime_eval'
+				},
 				reader: {
 					type: 'json', 
 					//root: 'toutdata'
 				},
-			}
+				writer: {
+					type:'json',
+					writeAllFields:false,
+					root:'data'
+				}
+			},
+			 listeners: {
+		            write: function(store, operation){
+		            	
+		            	console.log('wrtie',operation,operation.action,operation.isComplete(),operation.records[0].commit()
+		            			)
+		            	operation.records.commit()
+		                		            }
+		        }
 		});
         //this.columns= [{text:'test',dataIndex:'col1',width:30},{text:'truc',dataIndex:'col2'}]
 		
@@ -46,6 +66,7 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 			var cols=this.getColumns(records[0].store.proxy.reader.columns)
 			this.eval=records[0].store.proxy.reader.eval
 			this.reconfigure(this.store,cols)
+			
 			//this.show()   
 		},this)
 		this.store.on('beforeload',function() {
