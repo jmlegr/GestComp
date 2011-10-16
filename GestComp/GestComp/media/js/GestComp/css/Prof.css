@@ -1,3 +1,17 @@
+/* test wrap */
+.x-column-header-inner .x-column-header-text {
+    white-space: normal;
+}
+
+.x-column-header-inner {
+    line-height: normal;
+    padding-top:3px!important;
+    padding-bottom:3px!important;
+    text-align: center;
+    top:20%;
+}
+
+
 
 #app-header  {
 	font-family: Arial, sans-serif;
