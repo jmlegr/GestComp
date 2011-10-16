@@ -22,7 +22,23 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 		    }
 		}]
 		this.items=[{//xtype:'panel',
-			xtype:'evaluation_resultats',
+			//xtype:'evaluation_resultats',
+			/* a modifier pour géer l'acces aux boutons sans doute...*/
+			layout:'border',
+			id:'evaluation_resultats',
+			items:[{
+				region:'center',
+				id:'grille_resultats',
+				xtype:'evaluation_resultats',
+			},{
+				region:'east',
+				id:'panel_detail',
+				html:'details',
+				title:'détails',
+				collapsible:true,
+				split:true,
+			}],
+			
 			gridlockable:true,   
 			title:'Résultats',
 			id:'tab-resultats',

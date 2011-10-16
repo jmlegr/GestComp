@@ -6,8 +6,9 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     	ref:'affichage',
     	selector:'evaluation_affichage'
     },{
-    	ref:'resultats',
-    	selector:'evaluation_affichage #tab-resultats'
+    	ref:'grille_resultats',
+    	//selector:'evaluation_affichage #tab-resultats'
+    	selector:'evaluation_affichage #grille_resultats'
     },{
     	ref:'general',
     	selector:'evaluation_affichage #tab-autres > #infos_eval_general'
@@ -42,9 +43,9 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     		},
     		'evaluation_resultats #btn_sauvegarder': {
     			'click':function() {console.log('click')
-    				 recs=this.getResultats().getStore().queryBy(
+    				 recs=this.getGrille_resultats().getStore().queryBy(
     					function(e,i) {return e.dirty})
-    				console.log(recs,this.getResultats().getStore().getUpdatedRecords())
+    				console.log(recs,this.getGrille_resultats().getStore().getUpdatedRecords())
     				//recs.each(function(r){console.log(r.getChanges())})
     				//recs.each(function(r){console.log(r); r.cancelEdit()})
     				 }

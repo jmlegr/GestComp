@@ -11,8 +11,8 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     	ref:'affichage',
     	selector:'evaluation_affichage'
     },{
-    	ref:'resultats',
-    	selector:'evaluation_affichage #tab-resultats'
+    	ref:'grille_resultats',
+    	selector:'evaluation_affichage #grille_resultats'
     },{
     	ref:'general',
     	selector:'evaluation_affichage #tab-autres > #infos_eval_general'
@@ -24,6 +24,7 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     stores:['Evaluations'],
     init: function() {
     	//activation des tabs
+    	
     	this.control({
     		'navigation_evaluation': {   		
     			'itemclick':{
@@ -45,9 +46,9 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     		'evaluation_resultats': {
     			
     			'reconfigure':function(a,b,c,d){
-    				console.log('getResult',this.getResultats())
-    				if (this.getResultats().eval) {
-    					this.getDetail().tpl.overwrite(this.getDetail().body,this.getResultats().eval)
+    				console.log('getResult',this.getGrille_resultats())
+    				if (this.getGrille_resultats().eval) {
+    					this.getDetail().tpl.overwrite(this.getDetail().body,this.getGrille_resultats().eval)
     				} 
 
     			}
@@ -59,7 +60,7 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     	this.getAffichage().updateTitle(record);  
     	//console.log('tpmaplte',this.getGeneral().body)
     	//this.getGeneral().tpl.overwrite(this.getGeneral().body,record.data)
-    	this.getResultats().reload(record.get('id'))
+    	this.getGrille_resultats().reload(record.get('id'))
  		
  	},
  	
