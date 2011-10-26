@@ -46,9 +46,9 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     		'evaluation_resultats': {
     			
     			'reconfigure':function(a,b,c,d){
-    				console.log('getResult',this.getGrille_resultats())
     				if (this.getGrille_resultats().eval) {
     					this.getDetail().tpl.overwrite(this.getDetail().body,this.getGrille_resultats().eval)
+    					this.getGeneral().tpl.overwrite(this.getGeneral().body,this.getGrille_resultats().eval)
     				} 
 
     			}

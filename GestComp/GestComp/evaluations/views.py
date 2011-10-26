@@ -358,7 +358,7 @@ def resultats_eval(request):
     if  not ('id' in request.GET): 
         return {'success':False,'errorMessage':'Aucune clef.'} #,'data':{},'columns':{},'metadata':{}
     try:
-        eval=Evaluation.objects.get(id=request.GET['id'])
+        eval=Evaluation.objects.select_related('user').get(id=request.GET['id'])
     except:
         return {'success':False,'errorMessage':'Evaluation inconnue.'}
     
@@ -540,7 +540,10 @@ def resultats_eval(request):
         return {'metaData':{'root':'data',
                             'fields':fields,
                             'columns':columns,
-                            'eval':{'id':eval.id,'description':eval.description,'note':eval.a_note}
+                            'eval':{'id':eval.id,'description':eval.description,'note':eval.a_note,
+                                    'nom':eval.nom,'user':eval.user.first_name,
+                                    'date_modification':eval.date_modification.isoformat(),
+                                    'date_evaluation':eval.date_evaluation.isoformat()}
                             },
                 'success':True,
                 'data':data,

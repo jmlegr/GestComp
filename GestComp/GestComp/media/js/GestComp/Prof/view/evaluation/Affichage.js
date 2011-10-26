@@ -21,9 +21,8 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 		        // show help here
 		    }
 		}]
-		this.items=[{//xtype:'panel',
-			//xtype:'evaluation_resultats',
-			/* a modifier pour géer l'acces aux boutons sans doute...*/
+		this.deferredRender=false,
+		this.items=[{
 			layout:'border',
 			id:'evaluation_resultats',
 			items:[{
@@ -50,13 +49,13 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 			items:[{
 				region:'center',flex:1,
 				id:'infos_eval_general',
-				tpl:'<tpl> <p><b>{nom}</b> (n°{id}) créée par <i>{user}</i></p>'+			
-				'<tpl if="date_evaluation"><p>effectuée le {date_evaluation:date("l d F Y")}</p></tpl>'+
-				'<p> modifiée le {date_modification:date("l d F Y")}'+
-				' à {date_modification:date("G:i")}</p></tpl>'
+				tpl:new Ext.XTemplate('<tpl> <p><b>{nom}</b> (n°{id}) créée par <i>{user}</i></p>',			
+				'<tpl if="date_evaluation"><p>effectuée le {date_evaluation:date("l d F Y")}</p></tpl>',
+				'<p> modifiée le {date_modification:date("l d F Y")}',
+				' à {date_modification:date("G:i")}</p></tpl>')
 				},{
 					region:'south',flex:1,
-					id:'infos_eval_detail',
+					id:'infos_eval_detail', html:'bientot ici',
 					tpl: '<tpl><tpl if="note"><p><b>Notée</b></p></tpl>'+
 						'Description: {description}</tpl>'
 				}]
