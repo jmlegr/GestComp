@@ -86,16 +86,18 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                  }
              }]
         }];
+		
 		this.callParent();
 		this.on('edit',function(editor,e) {this.onAfteredit(editor,e)});
 		//this.on('validateedit',function(editor,e) {console.log('validate',e)});
 		this.on('reconfigure',function(){
 			//reset sur le bouton editer,sans relayer l'éevenement
 			this.down('#btn_editer').toggle(false,true)
-		})
+		});
 		
 	},
 	onSync: function(){
+		console.log('SYNCHRO')
         this.store.sync();
     },
 
@@ -414,13 +416,23 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				rec.points_calcules=""+rec.score*rec.bareme/rec.items
 			}	
 		}
+		var different=false
 		for (var key in rec_copie) {
-			if (rec_copie[key]!==rec[key]) {console.log('different',key)}
+			if (rec_copie[key]!==rec[key]) {
+				console.log('different',key)
+				different=true}
 		}
-		e.record.set(donnees,rec)	
-		e.record.set(resultat,field)
+		if (different) {
+			e.record.set(donnees,rec)	
+			e.record.set(resultat,field)
+		} else {
+			console.log('reject'); 
+			//e.record.reject(true)
+			e.record.cancelEdit()
+		}
+		
 		//e.record.set(e.field,"jkk"); e.record.set(e.field,field) 
-		console.log('modified',e.record.isModified(donnees))
+		console.log('modified',e.record.isModified(donnees),e.record.modified)
 		//on signale au proprio la fin de l'edition -> le record est a jour
 		//console.log('test:',e.record)
 		//console.log('fire finedit',e.record.dirty)

@@ -38,12 +38,29 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 					root:'data'
 				}
 			},
-			 listeners: {
+			listeners: {
+				 	update: function(store,record,operation) {
+				 		console.info('UPDATE',record.modified,operation)
+				 	},
+				 	datachanged: function(store){console.info('DATACHANGED')},
+				 	beforesync:function(options) {
+				 		console.info(po++,'BEFORESYNC',options,options.update[0].modified,options.update[0].dirty,this)
+				 		// pour 1 record
+				 		for (rec in options.update) {
+				 			var donnees_modifie=false
+				 			 
+				 			for (var r in options.update[rec].modified) {
+				 				donnees_modifie=donnees_modifie || (r.indexOf('donnees')!=-1)
+				 			}
+				 			console.info('update',options.update[rec].modified,donnees_modifie)
+				 			
+				 		}		 		
+				 	},
 		            write: function(store, operation){
 		            	
 		            	console.log('wrtie',operation,operation.action,operation.isComplete(),operation.records[0].commit()
 		            			)
-		            	operation.records.commit()
+		            	//operation.records.commit()
 		                		            }
 		        }
 		});
@@ -64,6 +81,7 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 		this.store.on('load',function(store,records,success,op) {
 			if (typeof(this.modifStore)!="undefined") store=this.modifStore(store,records[0].get('metaData'))
 			var cols=this.getColumns(records[0].store.proxy.reader.columns)
+			console.log('EVAL',records[0].store.proxy.reader.eval)
 			this.eval=records[0].store.proxy.reader.eval
 			this.reconfigure(this.store,cols)
 			

@@ -1,3 +1,4 @@
+var po=0
 Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     extend: 'Ext.app.Controller',
     views: ['navigation.Evaluation','evaluation.Affichage'],
@@ -21,11 +22,16 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     init: function() {
     	console.log('init res')
     	this.control({
-    		'evaluation_resultats': {
-    			'edit':function(ed,e,opt)
-    				{console.log('startEdiot',e.record.modified,e.record.getChanges())
+    		//'evaluation_resultats': {
+    		'dynamic_grid': {
+    			'edit':function(ed,e,opt)    				
+    				{
+    				donnees='donnees'+e.field.substring(e.field.indexOf('_'))
+    				console.log(po++,'startEdiot',donnees,e.record.isModified(donnees),e.record.modified,e.record.getChanges())
     				console.log('====',e)
-    				for (var f in e.record.modified) {
+    				/*
+    				 
+    				 for (var f in e.record.modified) {
     					var same=true
     					for (var key in e.record.modified[f]) {
     						if (e.record.modified[f][key]!==e.record.getChanges()[f][key]) {    							
@@ -35,6 +41,19 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     						}
     					}
     					console.log('field',f,same)
+    				}
+    				*/
+    				/*if (same) {
+    					console.info('commi')
+    					e.record.commit()
+    				}*/
+    				if (e.record.isModified(donnees)) {
+    					console.log('Donnees modifées on sauvegarde')
+    				} else {
+    					console.log('Dionneees non modifess on annule')
+    					//e.record.commit(true)
+    					//e.record.reject(true)
+    					e.record.cancelEdit()
     				}
     				//ed.cancelEdit()
     				},

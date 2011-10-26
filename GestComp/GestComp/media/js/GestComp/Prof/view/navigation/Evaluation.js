@@ -33,7 +33,7 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
 					dataIndex:'date_evaluation',
 					 afterText:'Après',
 		             beforeText:'Avant',
-					//value:{after:zedate} --> ne marche pas
+					value:{after:zedate}
 				}]
 	           }
 		this.features= [{
@@ -53,56 +53,49 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
     	    	xtype:'booleancolumn', width:30,sortable:true, cachee:true,
     	    	trueText: 'Moi',
             	falseText: 'Collègue', 
-				filterable:false,			  					
+				filterable:true,			  					
 			},
-			{header:'nom',dataIndex:'nom'
+			{header:'nom',dataIndex:'nom',
 			
 			},			
 			{header:'modification', dataIndex:'date_modification',
-        	 	xtype: 'datecolumn', format: 'd/m/Y',filterable:true,
-        	 	
-        	 	filter:{
-	                type: 'date',
-	                afterText:'Après',
-	                beforeText:'Avant',
-	    			onText : 'Le',
-	            }
+        	 	xtype: 'datecolumn', format: 'd/m/Y',
         	 },
         	 {header:'date',dataIndex:'date_evaluation',
-        		xtype: 'datecolumn', format: 'd/m/Y',filterable:true,
-        		filter:{
-	                type: 'date',
-	                afterText:'Après',
-	                beforeText:'Avant',
-	    			onText : 'Le',
-	            }        		
+        		xtype: 'datecolumn', format: 'd/m/Y',
         	},
         	{header:'Créé par',dataIndex:'user',filterable:true}
         			     
         ]; 
         
         this.callParent() 
-        //console.log('this',this.filters.view.rendered)
+        
         this.on('afterrender', function(){
+        	console.log('this',this)
         		/* curieusement, les filtres ne semblent pas exister tant qu'on ne les a pas créés
         		 * même s'ils sont dans la config et que le menu est là...
         		 * on recré volontairement un filtre sur la date et on l'active
         		 */
         		//Ext.util.Observable.capture(Ext.getCmp('navEvaluations'), console.info)
-        		this.filters.addFilter({
+        		
+        		/*
+        		 
+        		 this.filters.addFilter({
 					  type: 'date',
 		                dataIndex:'date_modification',
 		    			value:{after:zedate}
 		                //value:{after:date_rentree}
 				})
         		this.filters.getFilter('date_modification').setActive(true);
-        		
+        		*/
         		/*
         		 * on cache les colonnes avec l'attribut "cachee"
         		 */
+        	/*
         		Ext.each(this.headerCt.gridDataColumns,function(c) {
         				if (c.cachee) c.hide();
         		});
+        	*/
         },this,{single:true})
         
         
