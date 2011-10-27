@@ -74,35 +74,7 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
         ]; 
         
         this.callParent() 
-        
-        this.on('afterrender', function(){
-        	console.log('this',this)
-        		/* curieusement, les filtres ne semblent pas exister tant qu'on ne les a pas créés
-        		 * même s'ils sont dans la config et que le menu est là...
-        		 * on recré volontairement un filtre sur la date et on l'active
-        		 */
-        		//Ext.util.Observable.capture(Ext.getCmp('navEvaluations'), console.info)
-        		
-        		
-        		 /*
-        		 this.filters.addFilter({
-					  type: 'date',
-		                dataIndex:'date_modification',
-		    			value:{after:zedate}
-		                //value:{after:date_rentree}
-				})
-        		this.filters.getFilter('date_modification').setActive(true);
-        		*/
-        		/*
-        		 * on cache les colonnes avec l'attribut "cachee"
-        		 */
-        		/*
-        		Ext.each(this.headerCt.gridDataColumns,function(c) {
-        				if (c.cachee) c.hide();
-        		});
-        		*/
-        	
-        },this,{single:true})
+      
         
         
         

@@ -4,6 +4,45 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 	alias:'widget.evaluation_resultats',	
 	initComponent :function() {
 		//console.log(this.store)
+		// override pour contourner bug EXTJSIV-2550, e.value n'est pas à jour
+		Ext.grid.plugin.CellEditing.override({
+			onEditComplete : function(ed, value, startValue) {
+		        var me = this,
+		            grid = me.grid,
+		            sm = grid.getSelectionModel(),
+		            activeColumn = me.getActiveColumn(),
+		            dataIndex;
+		        
+		        if (activeColumn) {
+		        	dataIndex = activeColumn.dataIndex;
+
+		            me.setActiveEditor(null);
+		            me.setActiveColumn(null);
+		            me.setActiveRecord(null);
+		            delete sm.wasEditing;
+		    
+		            //déplacé ici:
+		            me.context.value = value;
+		            
+		            if (!me.validateEdit()) {
+		                return;
+		            }
+		            // Only update the record if the new value is different than the
+		            // startValue, when the view refreshes its el will gain focus
+		            if (value !== startValue) {
+		                me.context.record.set(dataIndex, value);
+		            // Restore focus back to the view's element.
+		            } else {
+		                grid.getView().getEl(activeColumn).focus();
+		            }
+		            
+		            // supprimé :
+		            //me.context.value = value;
+		            me.fireEvent('edit', me, me.context);
+		        }
+			}
+		});
+		
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
 	    });
@@ -88,7 +127,11 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
         }];
 		
 		this.callParent();
-		this.on('edit',function(editor,e) {this.onAfteredit(editor,e)});
+		this.on('validateedit',function(editor,e) {
+			// PB: bug EXTJSIV-2550, e.value n'est pas à jour --> contourné par l'override ci-dessus
+			this.onValidateedit(editor,e)
+		})
+		//this.on('edit',function(editor,e) {this.onAfteredit(editor,e)});
 		//this.on('validateedit',function(editor,e) {console.log('validate',e)});
 		this.on('reconfigure',function(){
 			//reset sur le bouton editer,sans relayer l'éevenement
@@ -159,7 +202,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 			var resultat_regexp=new RegExp(reg_nonfait +"|("+reg_d4+"|"+reg_score+")"+reg_faits,"i");		
 			
 			var pos=column.dataIndex.indexOf('_')
-			var champs='donnees'+column.dataIndex.substr(pos)
+			var donnees='donnees'+column.dataIndex.substr(pos)
 			var nb=column.nb_items
 			//function de validation
 			var validation=function(o) {
@@ -171,11 +214,16 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				// en 9 : valeur nb_faits
 				var erreur=false
 				if (tab) {
-					if (tab[9]) {
-						if (tab[9]>nb) return 'le nombre d\'items faits doit être \< '+nb
-						if (tab[5] && (tab[5]>tab[9])) return 'Le nombre d\'items doit être \< '+tab[9]
+					if (tab[7]) {
+						if (tab[5]>100) return 'Le purcentage ne peut être supérieur à 100'
+						if (tab[9] && tab[9]>nb) return 'le nombre d\'items faits doit être \< '+nb 
+					} else {
+						if (tab[9]) {
+							if (tab[9]>nb) return 'le nombre d\'items faits doit être \< '+nb 
+							if (tab[5] && (tab[5]>tab[9])) return 'Le nombre d\'items doit être \< '+tab[9]
+						}
+						if (tab[5] && (tab[5]>nb)) return  'Le nombre d\'items doit être \< '+nb
 					}
-					if (tab[5] && (tab[5]>nb)) return  'Le nombre d\'items doit être \< '+nb
 				}
 				return true
 			};
@@ -190,16 +238,18 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 					selectOnFocus:true,
 					validator:validation,
 					ignoreNoChange:true,
-					/*valueToRaw:function(v) {console.log('value',v,this); 
-						if (v) return v
-						}*/
 	            }
 			column.xtype="templatecolumn";
+			var score=donnees+'.score', 
+				items=donnees+'.items',
+				nb_faits=donnees+'.nb_faits'
 			column.tpl=new Ext.XTemplate('<tpl><div data-qtip="{[this.remarques(values)]}">{[this.getClass(values)]}' +
-                '<i data-qtip="{'+column.dataIndex+'}" class="{[this.getClass3(values)]}">{[this.score(values)]}</div></tpl>',
+                '<i data-qtip="Score:{'+score+'}'+
+                '<p>Items: {'+items+'}</p>'+
+                '<p>Faits: {'+nb_faits+'}</p>" class="{[this.getClass3(values)]}">{[this.score(values)]}</div></tpl>',
 				{ 
 				getClass: function(v) {
-                	val=v[champs];
+                	val=v[donnees];
                 	if (val.detail) {
                     	p=val.score/val.items;
                     	st= '<span class="imgdetail';
@@ -214,7 +264,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                 	else return '<span height=14px class="testimg testimgD4">'+st
                 },  			
  				getClass3: function(v) {
-          			val=v[champs];
+          			val=v[donnees];
           			if (!val.field) {
           				//console.log('pas field');
           				return ""};
@@ -230,7 +280,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
           			return ""
   				},
   				score: function(v) {
-          			val=v[champs];
+          			val=v[donnees];
           			//console.log('score',val)
           			if (val.nb_faits==="0") return 'Non Fait';
           			st = (val.field?val.field:'--') + '</i>';
@@ -238,7 +288,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
           			else return st;
   				},
   				remarques: function(v) {
-          			val=v[champs];
+          			val=v[donnees];
           			return val.remarques?val.remarques:'aucune remarque'
   				}
 				});
@@ -330,11 +380,14 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		//console.log('store',store,metaData)
 		return store
 	},
-	onAfteredit: function(editor,e) {
+	onValidateedit: function(editor,e) {
+		// TODO: sortir directement lorsqu'il n'y a pas d'edition en cours
 		//met a jour les différents champs de donnees suivant ce qui a été entré (ex 2%/10 ou EC+/20)						
-		console.log('apres edit',e);
+		
 		donnees='donnees'+e.field.substring(e.field.indexOf('_'))
 		resultat='resultat'+e.field.substring(e.field.indexOf('_'))
+		//console.log('validate edit',e,e.field,e.record.get(e.field),e.value);
+		//for (var i in e) {console.log(i,' >> ',e[i])}
 		rec_copie=e.record.get(donnees)
 		// on fait une copie pour que le changement soit bien noté (isModified() )
 		// note : ne fonctionne que pour une copie simple, sans objets ni methodes
@@ -347,7 +400,8 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		var reg_score="^(([0-9]+(\\.[0-9]+)?)(%)?)";
 		var reg_nonfait="^(nf)$"
 		var resultat_regexp=new RegExp(reg_nonfait +"|("+reg_d4+"|"+reg_score+")"+reg_faits,"i");
-		tab=resultat_regexp.exec(e.record.get(e.field))
+		//tab=resultat_regexp.exec(e.record.get(e.field))
+		tab=resultat_regexp.exec(e.value)
 		// en 1:nf
 		// en 3 : a ou na ou ec+ ou ec-
 		// en 5 : valeur du score
@@ -416,27 +470,21 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 				rec.points_calcules=""+rec.score*rec.bareme/rec.items
 			}	
 		}
-		var different=false
-		for (var key in rec_copie) {
-			if (rec_copie[key]!==rec[key]) {
-				console.log('different',key)
-				different=true}
-		}
-		if (different) {
-			e.record.set(donnees,rec)	
-			e.record.set(resultat,field)
+		// on compare la valeur initiale de resultat_ à celle calculée après edit
+		different=(e.record.get(resultat)!==field)
+		if (different) {						
+			// on sauvegarde resultat 
+			// et on annule les évènements suivant l'update de resultat_
+			e.record.data[resultat]=field
+			e.cancel=true
+			// on marque plutot les modifications dans donnees_
+			e.record.set(donnees,rec)
 		} else {
-			console.log('reject'); 
-			//e.record.reject(true)
-			e.record.cancelEdit()
+			//console.log('reject');
+			e.cancel=true
 		}
-		
-		//e.record.set(e.field,"jkk"); e.record.set(e.field,field) 
-		console.log('modified',e.record.isModified(donnees),e.record.modified)
-		//on signale au proprio la fin de l'edition -> le record est a jour
-		//console.log('test:',e.record)
-		//console.log('fire finedit',e.record.dirty)
-		//this.refOwner.fireEvent('finedit',e)
+		 
+		//console.log('modified',e.record.isModified(donnees),e.record.get(donnees), e.record.get(resultat))
 	},
 	onSave: function() {
 		var getModifiedRecords=function(store) {
