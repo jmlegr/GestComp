@@ -23,8 +23,12 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     
     stores:['Evaluations'],
     init: function() {
-    	//activation des tabs
-    	
+    	//calcul de la date de la rentrée pour être large, fixée au 15 aout
+		var today=new Date();
+		var date_rentree=new Date(today.getMonth()>=8?today.getFullYear():today.getFullYear()-1,7,15);
+    	var zedate=new Date(2010,2,1);
+		
+		//activation des tabs
     	this.control({
     		'navigation_evaluation': {   		
     			'itemclick':{
@@ -42,6 +46,40 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     			}    			
     		}
     	});		
+    	//ajout des filtres dès le premier rendu du layout
+    	/* TODO: 
+    	 * -ajouter les filtres au chargelment du store
+    	 * 				this.getEvaluationsStore().on('load',function(st){
+		 *					console.log('eval chergées',st.filters)})
+		 *- Filtrage par le serveur, par défaut année en cours
+    	 */
+    	this.control({
+    		'navigation_evaluation': {
+    			load: function() {console.info('loaded')},
+    			afterlayout: {
+    				fn: function(t,l) {    			
+    							console.log('layout',this,t,t.filters,t.filters.getFilter('date_evaluation'));
+    							t.filters.addFilter({
+    								type: 'date',
+    								dataIndex:'date_evaluation',
+    								value:{after:zedate}
+    								//value:{after:date_rentree}
+    							});
+    							t.filters.addFilter({
+    								type: 'date',
+    								dataIndex:'date_modification',
+    								value:{after:zedate}
+    								
+    							})
+    							//Le filtre n'est pas appliqué sur les dates d'éval, sinon on n'afficha pas les evals sans date
+    							t.filters.getFilter('date_evaluation').setActive(false);  
+    							t.filters.getFilter('date_modification').setActive(true);
+    				}, single:true
+    			}
+    		}
+    	})
+    	
+    	//Modification de l'afficahe de l'aonglet "autre" de l'eval
     	this.control({
     		'evaluation_resultats': {
     			

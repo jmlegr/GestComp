@@ -24,17 +24,22 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
 				//autoReload: false,
 				menuFilterText:'Filtre',			
 				//filterCls:'ux-filtered-columnTEST',
+				
 				filters:[{
 		        	   type:'string',
 		        	   dataIndex:'nom',
-		        	   value:'i'
 				},{
 					type:'date',
 					dataIndex:'date_evaluation',
 					 afterText:'Après',
 		             beforeText:'Avant',
-					value:{after:zedate}
+				},{
+					type:'date',
+					dataIndex:'date_modification',
+					afterText:'Après',
+			        beforeText:'Avant',
 				}]
+				
 	           }
 		this.features= [{
            	ftype:'grouping',
@@ -78,8 +83,8 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
         		 */
         		//Ext.util.Observable.capture(Ext.getCmp('navEvaluations'), console.info)
         		
-        		/*
-        		 
+        		
+        		 /*
         		 this.filters.addFilter({
 					  type: 'date',
 		                dataIndex:'date_modification',
@@ -91,11 +96,12 @@ Ext.define('GestComp.Prof.view.navigation.Evaluation',{
         		/*
         		 * on cache les colonnes avec l'attribut "cachee"
         		 */
-        	/*
+        		/*
         		Ext.each(this.headerCt.gridDataColumns,function(c) {
         				if (c.cachee) c.hide();
         		});
-        	*/
+        		*/
+        	
         },this,{single:true})
         
         
