@@ -55,10 +55,8 @@ Ext.define('GestComp.Prof.controller.navigation.Evaluation', {
     	 */
     	this.control({
     		'navigation_evaluation': {
-    			load: function() {console.info('loaded')},
     			afterlayout: {
     				fn: function(t,l) {    			
-    							console.log('layout',this,t,t.filters,t.filters.getFilter('date_evaluation'));
     							t.filters.addFilter({
     								type: 'date',
     								dataIndex:'date_evaluation',
