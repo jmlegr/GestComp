@@ -455,10 +455,10 @@ def resultats_eval(request):
                 elif (resultat_eleve.methode=='Po'):
                     if (resultat_eleve.detail and (resultat_eleve.nb_faits!=None) and (resultat_eleve.nb_faits!=0)):
                         #field='%.2f %%' % (resultat_eleve.score*Decimal('100.0')/resultat_eleve.nb_faits)
-                        field='%g %%' % round((resultat_eleve.score*Decimal('100.0')/resultat_eleve.nb_faits),2)
+                        field='%g%%' % round((resultat_eleve.score*Decimal('100.0')/resultat_eleve.nb_faits),2)
                     else:
                         #field='%.2f %%' % (resultat_eleve.score*Decimal('100.0')/resultat_eleve.items)
-                        field='%g %%' % round((resultat_eleve.score*Decimal('100.0')/resultat_eleve.items),2)
+                        field='%g%%' % round((resultat_eleve.score*Decimal('100.0')/resultat_eleve.items),2)
                 elif (resultat_eleve.methode=="D4"):
                     if (resultat_eleve.detail and (resultat_eleve.nb_faits!=None) and (resultat_eleve.nb_faits!=0)):
                         p=resultat_eleve.score/resultat_eleve.nb_faits
