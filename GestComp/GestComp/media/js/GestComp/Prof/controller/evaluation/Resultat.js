@@ -25,7 +25,11 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     init: function() {
     	console.log('init res')
     	this.control({    		
-    		
+    		'evaluation_affichage #refresh': {
+    			'click': function(){
+    				evaluation=this.getGrille_resultats().evaluation
+    				if (typeof(evaluation) !='undefined') this.getGrille_resultats().reload(evaluation.id)}
+    		},
     		'evaluation_resultats #btn_autosync': {
     			'toggle': function(b,pressed) {
     				this.getBtn_sauvegarder().setDisabled(pressed)    				

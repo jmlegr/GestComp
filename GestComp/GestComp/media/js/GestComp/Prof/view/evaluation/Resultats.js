@@ -504,7 +504,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 		var store=this.store,	
 			me=this,
 			modified = this.store.getUpdatedRecords(),
-			eval=this.eval;
+			evaluation=this.evaluation;
 		
 		if (modified.length > 0) {
 			var recordsToSend = [];			
@@ -531,9 +531,9 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 							r+='<li><i>'+msg+'</i>::' +json.errorMessage[msg]+'</li>'
 						}
 						r+='</div>'
-						//GestComp.Bus.fireEvent('erreur','Gestion Eval: ERREUR',r,true)
+						//GestComp.Bus.fireEvent('erreur','Gestion evaluation: ERREUR',r,true)
 						Ext.Msg.alert('Erreur',r)
-						me.reload(eval.id)
+						me.reload(evaluation.id)
 					}
 					
 					 

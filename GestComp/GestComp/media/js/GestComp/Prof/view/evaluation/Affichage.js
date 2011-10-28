@@ -8,18 +8,20 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 	initComponent:function() {
 		this.tools=[{
 		    type:'refresh',
-		    tooltip: 'Refresh form Data',
+		    itemId:'refresh',
+		    tooltip: 'Recharger les résultats',
 		    // hidden:true,
 		    handler: function(event, toolEl, panel){
 		        // refresh logic
 		    }
-		},
-		{
+		/*
+		},{
 		    type:'help',
 		    tooltip: 'Get Help',
 		    handler: function(event, toolEl, panel){
 		        // show help here
 		    }
+		*/
 		}]
 		this.deferredRender=false,
 		this.items=[{
