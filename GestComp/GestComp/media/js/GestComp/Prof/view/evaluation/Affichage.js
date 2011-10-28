@@ -35,6 +35,7 @@ Ext.define('GestComp.Prof.view.evaluation.Affichage',{
 				html:'details',
 				title:'détails',
 				collapsible:true,
+				collapsed:true,
 				split:true,
 			}],
 			

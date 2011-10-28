@@ -54,10 +54,16 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                 text: 'Editer',
                 id:'btn_editer',
                 iconCls: 'icon-pencil',
+                tooltip:'Cliquer pour éditer',
                 enableToggle: true,
                 listeners: {
                           'toggle': {
                         	  fn :function(b,pressed) {
+                        		  if (pressed) {
+                        			  if (this.store.autoSync) b.setTooltip('Finir l\'édition.')
+                        			  else b.setTooltip('Finir l\'édition.<p><b>Attention!</b>'+ 
+                        					  ' cela n\'enregistre pas les données!')
+                        		  } else b.setTooltip('Cliquer pour éditer.')
                         		  for (var i=0; i<this.headerCt.getColumnCount();i++) {
                         			  var ed=this.headerCt.getHeaderAtIndex(i).getEditor()
                         			  if (ed) {
@@ -69,6 +75,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                         	  scope:this
                           }
                 }
+            /*
             }, '-', {
                 text: 'Delete',
                 iconCls: 'icon-delete',
@@ -78,16 +85,21 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                         store.remove(selection);
                     }
                 }
+            */
             }, '-', {
             	text: 'Sauvegarder',
-            	id:'btn_sauvegarder',
+            	id:'btn_sauvegarder',       	
                 iconCls: 'icon-disk',
+                disabled:true,
+                tooltip:'La sauvegarde est automatique.'
+                /*                
                 listeners:{
                 	'click': {
                 		fn: this.onSave,
                 			scope:this
                 	}
                 }
+                */
             }]
 		},{
 			 weight: 2,
@@ -97,14 +109,16 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                  xtype: 'tbtext',
                  text: '<b>@cfg</b>'
              }, '|', {
-                 text: 'autoSync',
+            	 id:'btn_autosync',
+                 text: 'Sauvegarde Auto',
                  enableToggle: true,
                  pressed: true,
-                 tooltip: 'When enabled, Store will execute Ajax requests as soon as a Record becomes dirty.',
+                 tooltip: 'Si activé, les données sont sauvegardées automatiquement.',
                  scope: this,
                  toggleHandler: function(btn, pressed){
                      this.store.autoSync = pressed;
                  }
+             /*
              }, {
                  text: 'batch',
                  enableToggle: true,
@@ -123,6 +137,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
                  toggleHandler: function(btn, pressed){
                      this.store.getProxy().getWriter().writeAllFields = pressed;
                  }
+             */
              }]
         }];
 		
@@ -131,7 +146,11 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 			// PB: bug EXTJSIV-2550, e.value n'est pas à jour --> contourné par l'override ci-dessus
 			this.onValidateedit(editor,e)
 		})
-		//this.on('edit',function(editor,e) {this.onAfteredit(editor,e)});
+		this.on('edit',function(editor,e) {
+			// marche pas puisqu'on annule, va falloir tester sur validate?
+			console.log('edit')
+			//e.record.dirty=true
+		});
 		//this.on('validateedit',function(editor,e) {console.log('validate',e)});
 		this.on('reconfigure',function(){
 			//reset sur le bouton editer,sans relayer l'éevenement
@@ -476,7 +495,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 			// on sauvegarde resultat 
 			// et on annule les évènements suivant l'update de resultat_
 			e.record.data[resultat]=field
-			e.cancel=true
+			//e.cancel=true
 			// on marque plutot les modifications dans donnees_
 			e.record.set(donnees,rec)
 		} else {

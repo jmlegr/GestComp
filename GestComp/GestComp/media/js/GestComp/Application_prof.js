@@ -10,13 +10,22 @@ Ext.application({
 	controllers:[	
 		'Navigation',
 		'navigation.Eleve',
-		'navigation.Evaluation'
+		'navigation.Evaluation',
+		'evaluation.Resultat'
 	],
 	requires:['GestComp.ux.DynamicGrid','GestComp.Prof.view.evaluation.Resultats'],
 	autoCreateViewport:true,
     launch: function() {
-    	console.log('appli lanée')
-    
+    	// ajotu du csrf token pour django
+    	Ext.Ajax.on('beforerequest', function (conn, options) {			
+   			if (!(/^http:.*/.test(options.url) || /^https:.*/.test(options.url))) {
+   				     if (typeof(options.headers) == "undefined") {  
+       					options.headers = {'X-CSRFToken': Ext.util.Cookies.get('csrftoken')};  					  
+     				} else {     					
+       					options.headers.extend({'X-CSRFToken': Ext.util.Cookies.get('csrftoken')});
+     				}                        
+   			}
+		}, this);
      
  
 
