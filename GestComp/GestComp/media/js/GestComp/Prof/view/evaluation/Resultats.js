@@ -146,12 +146,7 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 			// PB: bug EXTJSIV-2550, e.value n'est pas à jour --> contourné par l'override ci-dessus
 			this.onValidateedit(editor,e)
 		})
-		this.on('edit',function(editor,e) {
-			// marche pas puisqu'on annule, va falloir tester sur validate?
-			console.log('edit')
-			//e.record.dirty=true
-		});
-		//this.on('validateedit',function(editor,e) {console.log('validate',e)});
+		
 		this.on('reconfigure',function(){
 			//reset sur le bouton editer,sans relayer l'éevenement
 			this.down('#btn_editer').toggle(false,true)
@@ -495,67 +490,50 @@ Ext.define('GestComp.Prof.view.evaluation.Resultats',{
 			// on sauvegarde resultat 
 			// et on annule les évènements suivant l'update de resultat_
 			e.record.data[resultat]=field
-			//e.cancel=true
-			// on marque plutot les modifications dans donnees_
+			// si on est en autoSync, on ne marque pas le dirty
+			if (this.store.autoSync) e.cancel=true
+			// on marque les modifications dans donnees_
 			e.record.set(donnees,rec)
 		} else {
 			//console.log('reject');
 			e.cancel=true
 		}
 		 
-		//console.log('modified',e.record.isModified(donnees),e.record.get(donnees), e.record.get(resultat))
 	},
-	onSave: function() {
-		var getModifiedRecords=function(store) {
-			liste=[]
-			Ext.each(store.data.items,function(e){
-				if (e.dirty) {
-					console.log('changes:',e.getChanges())
-					liste.push({eleve_id:e.data.eleve_id,modif:e.modified})
-				}
-			})
-			return liste
-		}
-		var store=this.store
-		console.log(this,store,getModifiedRecords(store))
-		return
-		var modified = store.getModifiedRecords();
+	sauvegarder: function() {
+		var store=this.store,	
+			me=this,
+			modified = this.store.getUpdatedRecords(),
+			eval=this.eval;
+		
 		if (modified.length > 0) {
 			var recordsToSend = [];			
 			Ext.each(modified, function(record) {
 				recordsToSend.push(record.getChanges());
 				//recordsToSend.push(record.data.eleve_id) //: pas nécessaire, on a l'id de la compétence_evaluée
 			});
-			/* 
-			var grid = Ext.getCmp('myEditorGrid'); // 3
-			grid.el.mask('Updating', 'x-mask-loading'); 
-			grid.stopEditing();
-			*/ 
-			//recordsToSend = Ext.encode(recordsToSend); 
 			
 			var el=this.el
 			el.mask('sauvegarde...',"x-mask-loading")
-			Ext.Ajax.request({ 
-				
+			Ext.Ajax.request({ 				
 				url: 'evaluations/modif_resultats', 
 				jsonData: {data: recordsToSend},
-				//callback: function(o,s,r) {console.log('callback',o,s,r.responseText.decode())},
 				success : function(result,response) { 
 					el.unmask();
 					json=Ext.decode(result.responseText)
 					if (json.success) {
-						store.commitChanges();
-						GestComp.Bus.fireEvent('message','Gestion Evaluation',json.msg)
+						Ext.each(modified, function(record) {record.commit()})
+						//GestComp.Bus.fireEvent('message','Gestion Evaluation',json.msg)
 					}
 					else {
-						r='<div style="padding-left:3em;">';
-						
+						r='<div style="padding-left:3em;">';						
 						for (msg in json.errorMessage) {
 							r+='<li><i>'+msg+'</i>::' +json.errorMessage[msg]+'</li>'
 						}
 						r+='</div>'
-						GestComp.Bus.fireEvent('erreur','Gestion Eval: ERREUR',r,true)
+						//GestComp.Bus.fireEvent('erreur','Gestion Eval: ERREUR',r,true)
 						Ext.Msg.alert('Erreur',r)
+						me.reload(eval.id)
 					}
 					
 					 

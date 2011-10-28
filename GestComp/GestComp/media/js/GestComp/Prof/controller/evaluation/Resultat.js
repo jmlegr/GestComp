@@ -25,9 +25,6 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     init: function() {
     	console.log('init res')
     	this.control({    		
-    		'evaluation_resultats' : {
-    			'edit':function() {console.info('edition')}
-    		},
     		
     		'evaluation_resultats #btn_autosync': {
     			'toggle': function(b,pressed) {
@@ -42,12 +39,8 @@ Ext.define('GestComp.Prof.controller.evaluation.Resultat', {
     			'disable':function(t) {
     				t.setTooltip('La sauvegarde est automatique.')},
     		
-    			'click':function() {console.log('click')
-    				 recs=this.getGrille_resultats().getStore().queryBy(
-    					function(e,i) {return e.dirty})
-    				console.log(recs,this.getGrille_resultats().getStore().getUpdatedRecords(),this.getGrille_resultats().getStore().autoSync)
-    				//recs.each(function(r){console.log(r.getChanges())})
-    				//recs.each(function(r){console.log(r); r.cancelEdit()})
+    			'click':function() {
+    				this.getGrille_resultats().sauvegarder()
     				 }
     		}
     	})
