@@ -87,7 +87,7 @@ Ext.define('GestComp.ux.DynamicGrid2',{
 			if (typeof(this.modifStore)!="undefined") store=this.modifStore(store,records[0].get('metaData'))
 			var cols=this.getColumns(records[0].store.proxy.reader.columns)
 			//console.log('EVAL',records[0].store.proxy.reader.eval)
-			this.eval=records[0].store.proxy.reader.eval
+			this.evaluation=records[0].store.proxy.reader.eval
 			this.reconfigure(this.store,cols)
 			
 			//this.show()   
